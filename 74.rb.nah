@@ -1,0 +1,66 @@
+require 'pp'
+
+@fact = Array.new(10)
+@fact[0] = 1
+@fact[1] = 1
+
+1.upto(9) do |i|
+  @fact[i] = i * @fact[i-1]
+end
+
+
+@t_cache = Hash.new(nil)
+
+def transform(n)
+  while n % 10 == 0
+    n/= 10
+  end
+  @t_cache[n] = do_transform(n) if @t_cache[n].nil?
+  @t_cache[n]  
+end
+
+
+def do_transform(n)
+  ret = 0
+  while n > 0
+    ret += @fact[n%10]
+    n-= n % 10
+    n /= 10
+  end
+  ret
+end
+
+
+@n_cache = Hash.new(nil)
+
+
+def normalize(n)
+ while n > 0 && n % 10 == 0
+   n /= 10
+ end
+ @n_cache[n] ||= do_normalize(n)
+end
+
+def do_normalize(n)
+  puts "stuff"
+  arr = Array.new
+  while n > 0
+    arr << n % 10
+    n-= n % 10
+    n /= 10
+  end
+  arr.sort! 
+  ret = 0
+  arr.each_index do |i|
+    ret += arr[i] * (10**i)
+  end 
+  ret
+end
+
+@hash = Hash.new(0)
+
+0.upto(10000) do |i|
+  @hash[normalize(i)] += 1
+end
+
+pp @hash.keys.size

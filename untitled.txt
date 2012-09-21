@@ -1,0 +1,24 @@
+Processing PostsController#preview (for 24.209.251.226 at 2010-09-15 11:21:02) [POST]
+  Parameters: {"v"=>"1V_xRb0x9aw\"] My future is comin' on, it's comin' on, it's comin' on, it's comin' on, it's comin' on [/a]\n\n", "authenticity_token"=>"JGs6vgBu4MhLB6TqN86ix8uEAaogrmCgdCQ9t15cBi4=", "controller"=>"posts", "action"=>"preview"}
+  User Load (1.0ms)   SELECT * FROM `users` WHERE (`users`.`id` = 63060) 
+
+NoMethodError (You have a nil object when you didn't expect it!
+You might have expected an instance of ActiveRecord::Base.
+The error occurred while evaluating nil.[]):
+  app/controllers/posts_controller.rb:20:in `block (3 levels) in preview'
+  app/controllers/posts_controller.rb:19:in `block (2 levels) in preview'
+  app/controllers/posts_controller.rb:17:in `preview'
+  haml (3.0.18) lib/sass/plugin/rack.rb:41:in `call'
+  haml (3.0.18) lib/sass/plugin/rack.rb:41:in `call'
+
+
+
+  update bands set short_name = 'Phish' where id=1;
+  update bands set short_name = 'Widespread'   where id=2;
+  update bands set short_name = 'String Cheese'   where id=3;
+  update bands set short_name = 'Bisco' where id=4;
+  update bands set short_name = 'moe.' where id=5;
+  update bands set short_name = 'Trey' where id=6;
+  update bands set short_name = 'The Dead' where id=7;
+  update bands set short_name = 'Yonder Mountain' where id=8;
+  update bands set short_name = 'Umphreys' where id=9;

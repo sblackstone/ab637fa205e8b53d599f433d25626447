@@ -1,0 +1,39 @@
+require 'pp'
+
+@phash = Hash.new
+@phash[0] = 1
+@phash[1] = 1
+
+
+def pent(i)
+   i * (3*i - 1) / 2
+end
+
+@pent = []
+1.upto(100000) do |i|
+  @pent << pent(i)
+  @pent << pent(i*-1)
+end
+
+def p(k)
+  return @phash[k] if @phash[k]
+  @phash[k] = 0
+  @pent.each_with_index do |pent,i|
+    break if pent > k
+    if (i % 4) < 2
+      @phash[k] += p(k - pent)
+    else 
+      @phash[k] -= p(k - pent)
+    end
+  end
+  return @phash[k] ||= val
+end
+
+j = 0
+while true
+  j = j + 1
+  i = j * 5 + 4
+  puts "p(#{i}) = #{p(i)}" if p(i) % 10_000 == 0
+  break if p(i) % 1_000_000 == 0
+end
+puts i

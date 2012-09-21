@@ -1,0 +1,50 @@
+
+class Triangle
+  attr_accessor :values
+  attr_accessor :rows
+  attr_accessor :element_count
+  def initialize(values)
+    self.values = values
+    self.rows   = self.row_of(values.size)
+    puts self.rows
+    self.element_count = (self.rows * (self.rows + 1)) / 2    
+    @row_of = Hash.new(nil)
+  end
+  
+
+  def row_of(n)
+    @row_of[n] ||= begin
+     0.upto(1000) do |i|
+      return(i) if (i * (i+1) * 0.5) >= n
+     end 
+    end
+  end
+  
+  def [](index)
+    @values[index-1]
+  end
+
+  def []=(index,obj)
+    @values[index-1] = obj
+  end
+
+  def ancestor_indexes(index)
+    [ self[row_of(index) + index],
+      self[row_of(index) + index + 1]
+    ]
+  end
+  
+  
+  
+end
+
+v = (0..119).to_a
+@t = Triangle.new(v)
+puts @t.row_of(1)
+puts @t.row_of(2)
+puts @t.row_of(3)
+puts @t.row_of(4)
+puts @t.row_of(5)
+puts @t.row_of(6)
+puts @t.row_of(7)
+puts @t[1]

@@ -1,0 +1,36 @@
+require 'pp'
+
+
+@phash = {}
+@fhash = {}
+0.upto(5001) do |i|
+  @fhash[i] = {}
+end
+def f(n,k)
+  #@fhash[n][k] ||= 
+  ((-1)**(k+1))*(p(n - ((k * ((3 * k) - 1)) / 2)) + p(n - ((k * ((3 * k) + 1)) / 2)) )
+end
+
+def p(n)
+  return 0 if n < 0
+  return 1 if n < 2
+  @phash[n] ||= (1..n).inject(0) {|a,k| a += f(n,k) }
+end
+
+1.upto(25) do |i|
+ puts "p(#{i}) = #{p(i)}" #if p(i) % 10_000 == 0
+ #puts i
+ exit if p(i) % 1_000_000 == 0
+end
+=begin
+# p(1) = 1
+# p(2) = 2
+# p(3) = 3
+# p(4) = 5
+# p(5) = 7
+# p(6) = 11
+# p(7) = 15
+# p(8) = 22
+# p(9) = 30
+# p(10) = 42
+=end

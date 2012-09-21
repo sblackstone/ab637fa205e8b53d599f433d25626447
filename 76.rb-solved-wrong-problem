@@ -1,0 +1,27 @@
+
+@p2_hash = Hash.new
+
+def p2(k,n)
+  @p2_hash["#{k}:#{n}"] ||= p2_do(k,n)
+end
+
+def p2_do(k,n)
+  return 0 if k > n
+  return 1 if k == n
+  return p2(k+1,n) + p2(k,n-k)
+end
+
+def p(n)
+  val = 1
+  start = (n / 2).floor  
+  1.upto(start) do |k|
+    val = val + p2(k, n - k)
+  end
+  return val
+end
+
+
+
+puts p(10)
+
+

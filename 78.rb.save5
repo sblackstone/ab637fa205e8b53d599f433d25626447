@@ -1,0 +1,48 @@
+require 'pp'
+
+
+@phash = {}
+@fhash = {}
+0.upto(10001) do |i|
+  @fhash[i] = {}
+end
+
+#def f(n,k)
+#  ((-1)**(k+1))*(p(n - ((k * ((3 * k) - 1)) / 2)) + p(n - ((k * ((3 * k) + 1)) / 2)) )
+#end
+
+def p(n)
+  return 0 if n < 0
+  return 1 if n < 2
+  #puts "Cache Miss #{n}" unless @phash[n]
+  @phash[n] ||= (1..n).inject(0) {|a,k| a += ((-1)**(k+1))*(p(n - ((k * ((3 * k) - 1)) / 2)) + p(n - ((k * ((3 * k) + 1)) / 2)) ) }
+end
+
+
+#puts p(1000)
+#exit
+vals = []
+1.upto(50000) do |i|
+ next unless (24*i) % 5**6 == 1 or i % 100 == 0
+ puts "p(#{i}) = #{p(i)}" if p(i) % 10000 == 0 or (i % 1000 == 0 and i < 2500)
+ vals << i if p(i) % 10000 == 0
+ #puts i
+ if p(i) % 1_000_000 == 0
+   puts i
+   exit
+ end
+end
+pp vals.map {|x| x % 5 }.uniq
+#puts "Not Found."
+=begin
+# p(1) = 1
+# p(2) = 2
+# p(3) = 3
+# p(4) = 5
+# p(5) = 7
+# p(6) = 11
+# p(7) = 15
+# p(8) = 22
+# p(9) = 30
+# p(10) = 42
+=end

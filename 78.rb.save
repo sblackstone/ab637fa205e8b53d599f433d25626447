@@ -1,0 +1,57 @@
+
+require 'primes'
+Primes.setup(10000)
+
+@d_hash = {}
+def d(n)
+  @d_hash[n] ||= do_d(n)
+end
+
+def do_d(n)
+  return n+1 if Primes.isPrime?(n)
+  val = n
+  1.upto(n/2) do |j|
+    if n % j == 0
+      val = val + j 
+    end
+  end
+  return val
+end
+
+@p_hash = {}
+def p(n)
+  @p_hash[n] ||= do_p(n).to_i
+end
+
+
+def do_p(n)
+  return 1 if n < 2
+
+  val = 0
+  0.upto(n-1) do |k|
+    val = val + (d(n-k) * p(k))
+  end
+  return val * (1.0 / n)
+end
+
+1.upto(10) do |i|
+  puts d(i)
+end
+
+
+1.upto(10000) do |i|
+  puts "p(#{i}) = #{p(i)}" if  p(i) % 10000 == 0 
+  exit if p(i) % 1000000 == 0
+end
+=begin
+# p(1) = 1
+# p(2) = 2
+# p(3) = 3
+# p(4) = 5
+# p(5) = 7
+# p(6) = 11
+# p(7) = 15
+# p(8) = 22
+# p(9) = 30
+# p(10) = 42
+=end

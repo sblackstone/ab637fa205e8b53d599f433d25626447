@@ -1,0 +1,60 @@
+require 'pp'
+require 'primes'
+require 'sigma'
+
+Primes.setup(100_000)
+
+@phash = Hash.new
+@phash[0] = 1
+@phash[1] = 1
+
+
+def pent(i)
+   i * (3*i - 1) / 2
+end
+
+
+@pent = []
+1.upto(100000) do |i|
+  @pent << pent(i)
+  @pent << pent(i*-1)
+end
+#pp @pent
+
+def p2(k)
+  return 0 if k < 0
+  return @phash[k] if @phash[k]
+  track = 0
+  @pent.each do |pent|
+    break if pent > k
+    t = p2(k - pent)
+    if track < 2
+      val = val + t
+    else 
+      val = val - t
+    end
+    track = (track + 1) % 4
+  end
+  return @phash[k] ||= val
+end
+
+
+def p(n)
+  return 0 if n < 0
+  return @phash[n] if @phash[n]
+  sum = 0
+  0.upto(n-1) do |k|
+    sum = sum + sigma(n-k)*p(k)
+  end
+  return @phash[n] ||= (sum / n)
+end
+
+
+#p(1000)
+#1.upto(2000) do |i|
+#  sigma(i)
+#end
+1.upto(2000) do |i|
+  puts "p2(#{i}) = #{p(i)}" 
+  exit if p2(i) % 1_000_000 == 0
+end

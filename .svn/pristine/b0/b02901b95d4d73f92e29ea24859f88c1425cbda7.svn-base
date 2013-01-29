@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int valid[28];
+
+/*
+@base = [31,73]
+
+def fast_prime(n)
+  return true  if n == 2
+  return false if n < 2
+  return false if n % 2 == 0
+  d = n-1
+  d >>= 1 while d & 1 == 0
+  @base.each do |a|
+    return true if a == n
+    t = d
+    y = ModMath.pow(a,t,n)              
+    while t != n-1 && y != 1 && y != n-1
+      y = (y * y) % n
+      t <<= 1
+    end
+    return false if y != n-1 && t & 1 == 0
+  end
+  return true
+end
+
+*/
+
+int mod_pow(int base, int power, int mod) {
+	int result = 1;
+	while (power > 0) {
+    if (power & 1 == 1) {
+			result = (result * base) % mod;	
+    }
+		base = (base * base) % mod;
+		power >>= 1;
+		
+	}
+	return(result);
+}
+
+int fast_prime(int n) {
+	if (n == 2) return true;
+	if (n < 2)  return false;
+	if (n % 2 == 0) return false;
+	int d = n - 1;
+	while (d % 2 == 0) {
+		d >>= 1;
+	}
+	int base[2] = { 31, 73};
+	int i;
+	for (i = 0; i < 2;i++) {
+		int a = base[i];
+		if (a == n) return true;
+		int t = d;
+		int y = mod_pow(a,t,n);
+		while (t != n - 1 && y != 1 && y != n-1) {
+			y = (y*y) % n;
+			t <<= 1;
+		}
+		if (y != n-1 && t & 1 == 0) {
+			return false;
+		}
+	}
+	return(true);
+}
+
+
+int check(int n) {
+  int n2 = n * n;
+  int i;
+  for (i=1; i <= 27; i+= 2) {
+    if (fast_prime(n2+i) == 1 && valid[i] == 0 || 
+        fast_prime(n2+i) == 0 && valid[i] == 1
+       ) {
+      return(0);
+    }
+  }
+  return(1);
+}
+
+
+int main() {
+	for (int i=0;i< 100;i++)
+	  if (fast_prime(i))
+	    printf("%i\n", i, fast_prime(i));
+	return(1);
+  valid[1] = 1;
+  valid[3] = 1;
+  valid[7] = 1;
+  valid[9] = 1;
+  valid[13] = 1;
+  valid[27] = 1;
+  int j;
+  for (j=2; j < 1000000; j+=2) {
+    if (check(j) == 1) {
+      printf("%i\n",j);
+    }
+  }
+}
+
+
+

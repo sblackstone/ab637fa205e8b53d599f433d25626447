@@ -1,0 +1,35 @@
+require 'pp'
+
+@fact = Array.new(10)
+@fact[0] = 1
+@fact[1] = 1
+
+1.upto(9) do |i|
+  @fact[i] = i * @fact[i-1]
+end
+
+
+def transform(n)
+  ret = 0
+  while n > 0
+    ret += @fact[n%10]
+    n = (n - n % 10) / 10
+  end
+  ret
+end
+
+
+def search(n, hash) 
+  return hash unless hash[n].nil?
+  hash[n] = true
+  return search(transform(n), hash)
+end
+
+
+@hash = Hash.new
+
+0.upto(10000) do |i|
+  @hash[search(i, Hash.new)] += 1
+end
+
+pp @hash.keys.size

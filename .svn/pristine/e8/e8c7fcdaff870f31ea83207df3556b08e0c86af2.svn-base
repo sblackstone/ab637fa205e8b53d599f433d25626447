@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SIZE 150000000
+
+bool * primes;
+
+
+void setup_primes() {
+  int i,j;
+  primes = (bool*)malloc(SIZE);
+  for (i=0;i < SIZE; i++) {
+    primes[i] = 1;
+  }
+  primes[0] = 0;
+  primes[1] = 0;
+  i = 2;
+  while (i < SIZE) {
+    for (j = i+i; j < SIZE; j+= i) {
+      if (j < SIZE) {
+        primes[j] = 0;
+      }
+    }
+    i++;
+    while (i < SIZE && primes[i] == 0) {
+      i++;
+    }
+  }
+
+
+
+  for (i=0;i < SIZE;i++) {
+    if (primes[i]) {
+      printf("%i\n", i);
+    }
+
+  }
+}
+
+int main() {
+  setup_primes();
+}
+
+
+

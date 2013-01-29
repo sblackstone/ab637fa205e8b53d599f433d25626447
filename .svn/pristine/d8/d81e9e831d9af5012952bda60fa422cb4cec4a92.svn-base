@@ -1,0 +1,114 @@
+require 'pp'
+require './primes2.rb'
+Primes.setup(1000)
+def gcd(a, b)
+    while b != 0
+       t = b
+       b = a % b
+       a = t
+    end
+    return a
+end
+
+def extended_gcd(a, b)
+    if a % b == 0
+        return 0, 1
+    else
+        x, y = extended_gcd(b, a % b)
+        return y, (x - y * (a / b))
+    end
+end
+
+def test_prime(n)
+  # Fermat's primality test.
+  10.times {
+    a = rand(n - 1) + 1
+    return false if modpow(a,n-1,n) > 1
+  }
+  true
+end
+
+def random_prime(min,max)
+  loop {
+    i = (rand(max - min - 1) + min + 1) | 1
+    return(i) if test_prime(i)
+  }
+end
+
+def modpow(b,e,m)
+  result = 1
+  while e > 0
+    if (e & 1) == 1
+      result = (result * b) % m;
+    end
+    e = e >> 1;
+    b = (b * b) % m;
+  end
+  return result
+end
+
+
+
+p = 19
+q = 37
+e = 0
+d = 0
+n = p * q
+dk = (p-1).lcm(q-1) 
+totient = (p - 1) * (q - 1)
+@counts = Hash.new(0)
+@removed = 0
+2.upto(totient - 1) do |e|
+  @removed += 1
+  next if e.gcd(totient) > 1
+  next if e % dk == 1 #remove degenerate keys.
+  next if e % dk == p
+  next if e % dk == q
+  #next if e % dk == n
+  @removed -= 1
+  count = 0
+  0.upto(n-1) do |m|
+    count += 1 if modpow(m,e,n) == m
+  end
+  @counts[count] += 1
+  #puts "e: #{e}\t#{count}" 
+end
+pp @counts
+pp @removed
+puts [@counts.values, @removed].flatten.inject(&:+)
+
+
+#while d < 1 or e < 1 or e >= totient or gcd(e,totient) > 1
+  #e = rand(totient)
+  #d,y = extended_gcd(e,totient)irb
+
+  #d = d % totient
+#end
+
+=begin
+puts "*" * 50
+puts "p: #{p}"
+puts "*" * 50
+puts "q: #{q}"
+puts "*" * 50
+puts "public exponent: #{e}"
+puts "*" * 50
+puts "private exponent: #{d}"
+puts "*" * 50
+puts "modulus: #{n}"
+puts "*" * 50
+
+message = "We launch at midnight"
+message = "AABBCC"
+code = []
+message.each_byte do |m|
+  code << modpow(m,e,n)
+end
+puts code.join("\n")
+puts "*" * 50
+
+code.each do |c|
+  print modpow(c,d,n).chr
+end
+puts "*" * 50
+=end

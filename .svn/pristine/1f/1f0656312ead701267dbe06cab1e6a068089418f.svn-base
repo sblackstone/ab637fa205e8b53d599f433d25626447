@@ -1,0 +1,4 @@
+  #user_show_form p { margin: 10px; }
+  #user_show_form .setlist_for { background: #fafafa; width: 90%; margin-left: 10px;}
+  #user_show_form .setlist_for .show_header  { font-size: 14px !important; }
+

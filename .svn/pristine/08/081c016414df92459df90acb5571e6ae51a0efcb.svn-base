@@ -1,0 +1,8 @@
+require 'pp'
+chars = []
+File.open("keylog.txt") do |f|
+  while (line = f.gets)
+    chars << line.strip
+  end
+  
+end

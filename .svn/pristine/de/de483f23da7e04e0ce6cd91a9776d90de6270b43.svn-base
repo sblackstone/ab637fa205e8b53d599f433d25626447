@@ -1,0 +1,17 @@
+require 'pp'
+
+@cache = Hash.new(nil)
+def p(n,k)
+  return 1 if k == 1 || k == n
+  return 0 if k > n || k == 0
+  @cache["#{n}:#{k}"] ||= p(n-1,k-1) + p(n-k, k)
+end
+
+@sum = 0
+@n = 100
+2.upto(@n) do |i|
+  puts "#{i}: #{p(@n,i)}"
+  @sum += p(@n,i)
+end
+
+puts @sum

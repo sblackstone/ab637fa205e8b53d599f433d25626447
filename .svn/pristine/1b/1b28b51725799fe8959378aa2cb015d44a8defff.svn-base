@@ -1,0 +1,16 @@
+rack-1.2.1
+rack-test-0.5.4
+rack-mount-0.6.12
+abstract-1.0.0
+erubis-2.6.6
+actionpack-3.0.0
+activerecord-3.0.0
+activeresource-3.0.0
+polyglot-0.3.1
+treetop-1.4.8
+mail-2.2.5
+actionmailer-3.0.0
+thor-0.14.0
+railties-3.0.0
+bundler-1.0.0
+rails-3.0.0

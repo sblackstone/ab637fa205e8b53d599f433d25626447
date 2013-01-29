@@ -1,0 +1,21 @@
+require 'bigdecimal'
+require 'bigdecimal/util'
+
+n = BigDecimal.new(10**14)
+while true
+  n += 1
+  a = 2
+  b = -2
+  c = n**2 - n
+  root = (4 + (8 * c)).sqrt(80)
+  s1 = (root + 2) 
+  s2 = (root - 2) 
+  if s1 % 4 == 0
+    puts n
+    puts root
+    puts s1 / 4
+    puts s2 / 4
+    puts "----"
+  end
+
+end

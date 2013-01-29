@@ -1,0 +1,70 @@
+class IFraction
+  attr_accessor :rbottom, :rtop, :ibottom, :itop
+  def initialize(n)
+    @square = n
+    @rtop    = 0
+    @itop    = 1
+    @rbottom = 1
+    @ibottom = 0 
+  end
+
+  def value
+    top    = @rtop + (@itop * Math.sqrt(@square))
+    bottom = @rbottom + (@ibottom * Math.sqrt(@square))
+    top / bottom.to_f
+  end
+  
+  def int
+    value.floor
+  end
+
+  def subtract_int(i)
+    @rtop -= i*@rbottom
+  end
+  
+  def flip
+    rtmp = @rtop
+    @rtop = @rbottom
+    @rbottom = rtmp
+    itmp = @itop
+    @itop = @ibottom
+    @ibottom = itmp
+  end
+  
+  def simplify
+    @itop = @rtop    
+    @rtop *= (@rbottom * -1)
+    @ibottom = 0
+    @rbottom = @square - @rbottom**2
+    gcd = @itop.gcd(@rtop)
+    gcd = gcd.gcd(@rtop)
+    gcd = gcd.gcd(@rbottom)
+    @itop /= gcd
+    @ibottom /= gcd
+    @rtop /= gcd
+    @rbottom /= gcd
+  end
+
+  def to_hash
+    "#{@itop}:#{@ibottom}:#{@rtop}:#{@rbottom}"  
+  end
+end
+
+
+@count = 0
+2.upto(10_000) do |n|
+  next if Math.sqrt(n) == Math.sqrt(n).floor
+  blarg = IFraction.new(n)
+  @seen = Hash.new(false)
+  while true
+    #puts blarg.int
+    blarg.subtract_int(blarg.int)
+    blarg.flip
+    blarg.simplify
+    break if @seen[blarg.to_hash]
+    @seen[blarg.to_hash] = true
+  end
+  @count+=1 if @seen.keys.size % 2 == 1
+  #puts "#{n} #{@seen.keys.size}" if @seen.keys.size % 2 == 1
+end
+puts @count

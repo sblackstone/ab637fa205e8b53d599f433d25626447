@@ -1,0 +1,38 @@
+
+@p2_hash = Hash.new
+
+0.upto(100000) do |i|
+  @p2_hash[i] = {}
+end
+
+def p2(k,n)
+  @p2_hash[k][n] ||= p2_do(k,n)
+end
+
+def p2_do(k,n)
+  return 0 if k > n
+  return 1 if k == n
+  return p2(k+1,n) + p2(k,n-k)
+end
+
+@p1_hash = Hash.new
+def p(n)
+  @p1_hash[n] ||= p_do(n)
+end
+
+def p_do(n)
+  val = 1
+  start = (n / 2).floor  
+  1.upto(start) do |k|
+    val = val + p2(k, n - k)
+  end
+  return val
+end
+
+
+i = 1
+while true
+  i = i + 1
+  puts "#{i}: #{p(i)}" if p(i) % 10000 == 0
+end
+

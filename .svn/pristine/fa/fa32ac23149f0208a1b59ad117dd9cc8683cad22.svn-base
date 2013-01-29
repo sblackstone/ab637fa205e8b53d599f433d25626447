@@ -1,0 +1,54 @@
+require 'pp'
+def rtriangle?(a,b,c)
+  return false unless a+b > c
+  return false     unless a+c > b
+  return false     unless b+c > a
+  return false     unless a**2 + b**2 == c**2
+  return true
+end
+
+def solutions(length)
+  sol = 0
+  1.upto(length-2) do |a|
+    1.upto(length - a - 1) do |b|
+      next unless a < b
+      c = length - a - b
+      next unless b < c
+      next unless rtriangle?(a,b,c)
+      sol = sol + 1
+      break if sol > 2
+    end
+    break if sol > 2
+  end
+  return sol
+end
+
+MAX = 1000
+UNK = 10
+
+@lengths = Hash.new(UNK)
+@valid   = []
+
+1.upto(MAX) do |i|
+  next unless @lengths[i] == UNK
+  if solutions(i) == 1
+    puts i
+    t = i + i
+    while t < MAX
+      @lengths[i] = false
+      t = t + i
+    end
+    @valid.each do |v|
+      t = i*v
+      while t < MAX
+        @lengths[i] = false
+        t = t + (i * v)
+      end
+
+    end
+    
+    @valid << i
+
+  end
+end
+

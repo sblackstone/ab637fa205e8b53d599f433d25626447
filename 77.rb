@@ -1,12 +1,38 @@
+require 'pp'
+require './primes.rb'
 
+=begin
+It is possible to write ten as the sum of primes in exactly five different ways:
 
-tt = [2,3,5,7]
-n = 10
-product = 1
+7 + 3
+5 + 5
+5 + 3 + 2
+3 + 3 + 2 + 2
+2 + 2 + 2 + 2 + 2
 
-tt.each do |t|
-  product *= (1 - 10**t)**-1
+What is the first value which can be written as the sum of primes in over five thousand different ways?
+=end
+
+Primes.setup(100)
+num = Primes.primes.length
+
+@answer = Array.new(num, 0)
+
+@track = Hash.new(nil)
+
+def count
+  0.upto(10) do |c|
+    0.upto(num) do |n|
+      @track[n] = c
+      count
+      @track[n] = 0
+    end
+    
+  end
+  
+  
 end
 
-puts product
+
+
 

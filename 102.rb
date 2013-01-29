@@ -1,6 +1,12 @@
 require 'pp'
 
 
+# All triangles that have 6,3 for the output contain origin
+#
+# For each edge of the triangle
+# draw a line through the origin with the same slope
+# That line needs to hit in two places for it to be in the middle.
+
 class Point
   attr_accessor :x, :y
   def initialize(x,y)

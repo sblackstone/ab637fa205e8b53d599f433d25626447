@@ -1,0 +1,27 @@
+# n   3
+# - = -
+# d   7
+#
+# 7n = 3d
+#
+# d = 5
+# 7n = 15
+# n = 15 / 7
+#
+puts 3.0/7
+
+@bestd = 0
+@bestn = 0
+@delta = 99999
+
+1.upto(1_000_000) do |d|
+  n = (3*d)/7
+  delt = (3.0/7) - n / d.to_f
+  puts puts "#{n} / #{d} = #{delt}"
+  if delt > 0 and delt < @delta
+    @delta = delt
+    @bestd = d
+    @bestn = n
+  end
+end
+puts "#{@bestn} / #{@bestd}"

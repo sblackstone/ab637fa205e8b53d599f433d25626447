@@ -1,0 +1,31 @@
+SIZE = 1_000_000
+require 'pp'
+def transform(n)
+  ret = 0
+  while n > 0
+    ret += (n % 10)**2
+    n-= n % 10
+    n /= 10
+  end
+  ret
+end 
+
+
+@track = Array.new(SIZE+1, nil)
+@track[1] = false
+@track[89] = true
+
+def search(n) 
+  unless @track[n].nil?
+    return @track[n]
+  end
+  @track[n] = search(transform(n))  
+end
+
+
+2.upto(SIZE) do |i|
+    search(i)
+    #puts "--------"
+end
+
+

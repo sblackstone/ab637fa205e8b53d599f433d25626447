@@ -1,0 +1,41 @@
+q
+
+
+
+~.
+require 'pp'
+
+MAX = 100000
+BAD = -999999999
+def sol?(len)
+  return false if len < 12 
+  1.upto(1000) do |m|
+    n = (len / (2.0*m)) - m
+    return true if m > n and m.gcd(n.to_i) == 1
+    
+  end
+  return false
+end
+
+solutions = Array.new(MAX+1,0)
+
+scount = 0
+(12..MAX).step(2) do |i|
+  next if solutions[i] >= 1
+  if sol?(i)
+    solutions[i] = 1
+    mult = i+i
+    while mult <= MAX
+      if solutions[mult] > 0 and i % solutions[mult] > 0
+        solutions[mult] = BAD
+      else
+        solutions[mult] = i
+      end
+      mult = mult + i
+    end
+  end
+  puts i if i % 100 == 0
+end
+1.upto(MAX+1).each do |i|
+  puts "#{i} #{solutions[i]}" unless solutions[i] == BAD
+end

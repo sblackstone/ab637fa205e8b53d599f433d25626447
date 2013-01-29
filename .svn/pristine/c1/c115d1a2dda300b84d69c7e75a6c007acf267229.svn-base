@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+int sdiv[1000000];
+
+int chain(int n) {
+	printf("%i\n", n);
+	printf("%i\n", sdiv[n]);
+	printf("%i\n", sdiv[sdiv[n]]);		
+	if (sdiv[n] == n) {
+		return(-99999);
+	}
+	return(7);
+}
+
+int main() {
+	int i,d;
+	for (i=1; i < 1000000; i++) {
+		sdiv[i] = 0;
+	}
+	for (d=1; d < 1000000; d++) {
+		i = d * 2;
+		while (i < 1000000) {
+			sdiv[i]+= d;
+			i += d;
+		}
+	}
+	printf("%d\n", chain(28));
+	return(0);
+	
+}

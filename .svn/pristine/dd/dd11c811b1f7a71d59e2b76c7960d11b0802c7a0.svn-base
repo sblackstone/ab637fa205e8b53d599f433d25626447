@@ -1,0 +1,19 @@
+require 'primes'
+require 'pp'
+
+
+2.upto(180) do |i|
+  next if i % 2 == 1
+  if i % 3 == 0 || i % 7 ==0 || i % 13 == 0 || i % 17 == 0
+  print " X " 
+  else
+    print "   "
+  end
+end
+puts
+2.upto(180) do |i|
+  next if i % 2 == 1
+  print "0" if i % 100 < 9
+  print "#{i%100} "
+end
+puts

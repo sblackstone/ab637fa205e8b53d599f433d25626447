@@ -1,0 +1,42 @@
+require 'pp'
+@phash = {}
+
+
+def p(n)
+  val = 1
+  1.upto(n/2) do |k|
+    val = val + p_k_n(k, n-k)
+  end
+  return val
+end
+
+
+@pkn_hash = {}
+0.upto(5000) do |i|
+  @pkn_hash[i] = {}
+end
+
+def p_k_n(k,n)
+  return 0 if k > n
+  return 1 if k == n
+  @pkn_hash[k][n] ||= p_k_n(k+1,n) + p_k_n(k, n - k)
+end
+
+1.upto(10000) do |i|
+    #next unless ((24*i) % (5**3)) == 1
+    #next unless i % 5 == 4
+    #puts "Testing #{i}"
+    puts "p(#{i}) = #{p(i)}" if p(i) % 10_000 == 0
+end
+=begin
+# p(1) = 1
+# p(2) = 2
+# p(3) = 3
+# p(4) = 5
+# p(5) = 7
+# p(6) = 11
+# p(7) = 15
+# p(8) = 22
+# p(9) = 30
+# p(10) = 42
+=end

@@ -1,0 +1,29 @@
+require 'pp'
+
+SIZE = 20_000
+
+@sdiv = Hash.new(0)
+
+1.upto(SIZE) do |d|
+  i = d*2
+  while i < SIZE
+    @sdiv[i]+= d
+    i+= d
+  end
+end
+
+def chain(n)
+  hsh = Hash.new(false)
+  hsh[n] = true
+  cur = @sdiv[n]
+  while hsh[cur] != true
+    hsh[cur] = true
+    cur = @sdiv[cur]
+  end
+  return cur != n ? 999999 : hsh.keys
+  pp hsh.keys
+    
+end
+
+
+pp chain(12496)

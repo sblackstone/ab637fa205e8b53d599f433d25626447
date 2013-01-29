@@ -1,0 +1,5 @@
+require 'pp'
+
+arr = 0.upto(99).to_a.reject {|x| x % 2 == 1 }
+pp arr
+puts arr.size

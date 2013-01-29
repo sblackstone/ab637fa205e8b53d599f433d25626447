@@ -1,0 +1,270 @@
+require 'bigdecimal'
+require 'bigdecimal/util'
+require 'pp'
+=begin
+
+
+x**2 - x = y**2 - y
+
+
+
+
+ Relate B & R throw 50/50
+
+2*x*(x-1) = y*(y-1)
+
+
+2(x**2 - x) = y**2 - y
+
+
+
+
+ b**2 - b / (n**2 - n) = 1/2
+ 
+ 
+
+ b**2 - b = r**2 - r - 2*r*b
+
+ If B = 15
+ 
+ 210 = r**2 -r - (15*2)r
+ r**2 - r - (15*2)r - (15**2 - 15) = 0
+
+ ergo - r = quad (1, b*2-1, (b**2 - b)*-1 )
+ 
+ (2b-1)^2 + 4(b**2 - b)
+ => 8b**2 - 8b +1
+ => 2(2b-1)**2 - 1
+
+ ==============================================
+ 
+ b**2 - b = r**2 - r - 2*rb
+ 
+      b**2 - b
+ ----------------  = 1/2
+ (r+b)**2 - (r+b) 
+ 
+
+
+
+p(Blue given Blue) = P(Blue given Blue) * P(Blue) / P(Blue)
+
+
+
+((b**2 - b) + (r**2 - r) + (2*b*r)) / ( (r+b)**2 - (r+b) )
+
+ 
+>> Math.sqrt(2) / 2
+=> 0.707106781186548
+ 
+ 
+((b**2 - b) / ((r+b)**2 - (r+b))) + ((r**2 - r) / ((r+b)**2 - (r+b))) + ((2*r*b) / ((r+b)**2 - (r+b)))  
+
+fact: b**2 - r**2 - 2rb = (b - r)
+b(b-1) - r(r-1) - 2rb = b-r
+
+=end
+=begin
+
+def quad(a,b,c)
+  bsquaredminusfourac = b**2 - (4 * a * c)
+  negb = b * -1
+  twoa = 2 *a
+  ans1 = negb + Math.sqrt(bsquaredminusfourac) 
+  ans2 = negb - Math.sqrt(bsquaredminusfourac) 
+  return (ans1 / twoa)
+end
+
+def quad2(b,c)
+  (Math.sqrt(b**2 + c) - b) / 2
+end
+=end
+=begin
+4.upto(1000) do |b|
+  r = (Math.sqrt(8*(b)*(b-1) + 1) - (b*2-1)) / 2
+  if r == r.round or b == 15
+    puts "#{b} #{r} #{b+r}"
+  end
+end
+=end
+
+
+# r = (Math.sqrt(x) - (b*2-1)) / 2
+=begin
+1.upto(1000) do |b|
+  1.upto(1000) do |r|
+    if b*(b-1) - r*(r-1) == 2*b*r
+      puts "#{b} #{r} #{b+r}"
+    end
+  end  
+end
+
+=end
+
+
+
+
+# BEST POSSIBLE ROUTE SO FAR!
+
+#x**2 - x = y**2 - y   x = Blue   y = N
+
+
+# b**2 - b = (n**2 - n) / 2
+
+# 2(b**2 - b) = (n**2 - n) 
+
+
+@cache = Hash.new(nil)
+@cache[0] = 1
+@cache[1] = 3
+
+
+def a(n)
+  @cache[n] ||= 6*a(n-1) - a(n-2) - 2
+end
+
+@cache2 = Hash.new(nil)
+@cache2[0] = 0
+@cache2[1] = 1
+
+def a2(n)
+  @cache2[n] ||= 6*a2(n-1) - a2(n-2) 
+end
+
+1.upto(100) do |i|
+ v = a(i)
+ v2 = a2(i)
+ puts "#{v} #{v2} #{v+v2}"
+ break if v+v2 > 10**12
+end
+
+
+
+
+
+
+@check = Hash.new(nil)
+
+i = 1
+while true
+  t = i**2 - i
+  if t % 2 == 0 and @check[t/2]
+    #puts "#{i} #{@check[t/2]} #{i - @check[t/2]}"
+    puts "#{@check[t/2]}"
+    exit if i > 10**12
+  end
+  @check[t] = i
+  i += 1
+end
+exit
+
+
+@values = Hash.new(nil)
+
+stop = 10**17
+i = 3
+while true
+  x = i**2 
+  @values[x] =  i
+  break if x > stop
+  i += 2
+end
+
+puts "Phase 1 done"
+
+b = 1
+while true
+  b2 = 8*b**2 - 8*b + 1
+  if @values[b2]
+    r = (@values[b2] - (b*2-1)) / 2
+    puts "#{b} #{r} #{b+r}"
+  end
+  
+  break if b2 > x
+  b += 2
+end
+
+
+=begin
+@values = Hash.new(nil)
+
+ i = 10**6 -1
+#i = 3
+while true
+  i2 = (i+1)*(i-1)
+  @values[i2] = i
+   break if i2 > 10**15
+#  break if i2 > 10**5
+
+  i += 2  
+end
+
+puts "Setup done"
+b = 300_000
+#b = 1
+while true
+  b2 = 8*b*(b-1)
+  if @values[b2]
+    r = (@values[b2] - (b*2-1)) / 2
+    puts "#{b} #{r} #{b+r}"   
+    break if b+r > 10**12
+  end
+  b +=1 
+  break if b2 > i2
+end
+=end
+
+
+exit
+
+def quad3(b)
+  (Math.sqrt(8*(b)*(b-1) + 1) - (b*2-1)) / 2
+end
+
+
+
+
+
+
+
+
+
+
+
+
+=begin
+
+def newton(n) 
+  x0 = BigDecimal.new("#{Math.sqrt(n).round}")
+  5.times do |i|
+    x0 = x0 - (x0**2 - n) / (2*x0)
+  end
+  return x0.floor
+end
+
+def square_test(n)
+  h = n & 0xF;
+  return false unless h == 0 || h == 1 || h == 4 || h == 9                  
+  v = Math.sqrt(n)
+  v = newton(n)
+  return(v**2 == n)
+end
+
+def quad3(b)
+  (Math.sqrt(8*(b)*(b-1) + 1) - (b*2-1)) / 2
+end
+
+@start = 2
+while true
+  @start += 1
+  b = @start
+  test = 8*(b)*(b-1) + 1 
+
+  if square_test(test)
+    r = quad3(b)
+    t = (b+r).to_f
+    v = (b/t)*((b-1)/(t-1))
+    puts "#{b/t} #{r/t}"
+  end
+end
+=end

@@ -1,0 +1,56 @@
+require 'primes'
+
+
+@p_hash = {}
+def p(n)
+  @p_hash[n] ||= do_p(n)
+end
+
+
+def do_p(n)
+  val = 1
+  1.upto(n/2) do |k|
+    val = val + p_k_n(k, n-k)
+  end
+  return val
+end
+
+@pkn_hash = {}
+def p_n_k(n,k)
+  @pkn_hash[n] ||= {}
+  @pkn_hash[n][k] ||= do_p_k_n(n,k)
+end
+
+def do_p_n_k(n,k)
+  return 0 if k > n
+  return 1 if k == n
+  return p_n_k(k+1,n) + p(k, n - k)
+end
+
+
+#1.upto(10) do |i|
+#  puts "#{i}: #{p(i)}"
+#end
+#exit
+
+
+
+62.upto(10000) do |i|
+    next if i % 7  == 5
+    next if i % 11 == 6
+    puts "p(#{i}) = #{p(i)}" if p(i) % 10000 == 0  or i < 100
+    exit if p(i) % 1000000 == 0
+
+end
+=begin
+# p(1) = 1
+# p(2) = 2
+# p(3) = 3
+# p(4) = 5
+# p(5) = 7
+# p(6) = 11
+# p(7) = 15
+# p(8) = 22
+# p(9) = 30
+# p(10) = 42
+=end

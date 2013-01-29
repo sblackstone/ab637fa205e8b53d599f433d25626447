@@ -1,0 +1,61 @@
+require './primes.rb'
+
+require 'pp'
+
+
+@base = [31,73]
+
+def fast_prime(n)
+  return true  if n == 2
+  return false if n < 2
+  return false if n % 2 == 0
+  d = n-1
+  d >>= 1 while d & 1 == 0
+  @base.each do |a|
+    return true if a == n
+    t = d
+    y = ModMath.pow(a,t,n)              
+    while t != n-1 && y != 1 && y != n-1
+      y = (y * y) % n
+      t <<= 1
+    end
+    return false if y != n-1 && t & 1 == 0
+  end
+  return true
+end
+
+@ok = Hash.new(false)
+@ok[1] = true
+@ok[3] = true
+@ok[7] = true
+@ok[9] = true
+@ok[13] = true
+@ok[27] = true
+
+def check(n)
+  n2 = n*n
+  (1).upto(27) do |i|
+    pri = fast_prime(n2+i)
+    return false if (!pri and @ok[i]) || (pri and !@ok[i])
+  end
+  return true  
+end
+
+x = 2
+i = 1
+@add = [8,4]
+valid = []
+while true
+  i = (i + 1) % 2
+  x += @add[i]
+  break if x > 10**6
+  next if x % 7 == 0 || x % 13 == 0
+  if check(x)
+    valid << x
+    pp valid
+  end
+end
+pp valid
+pp valid.inject(&:+)
+
+

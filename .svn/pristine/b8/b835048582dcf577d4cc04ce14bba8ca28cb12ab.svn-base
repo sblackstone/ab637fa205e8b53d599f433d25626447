@@ -1,0 +1,75 @@
+require './primes.rb'
+
+require 'pp'
+
+N=100_000
+
+Primes.setup(N)
+
+puts "Setup complete"
+
+PRESENT = -9
+
+class CandidateSet
+  def initialize(p)
+    @values = Hash.new
+    @flags = Hash.new(false)
+    self.add(p)
+  end  
+
+  def flagged?(n)
+    @flags[n]
+  end
+
+  def flag(n)
+    @flags[n] = true
+  end
+
+  def size
+    @values.size
+  end
+
+  def add(n)
+    @values[n] = true
+  end
+
+  def to_s
+    @values.keys.join(",")
+  end
+
+  def check(n)
+    @values.keys.each do |k|
+      a = "#{k}#{n}"
+      b = "#{n}#{k}"
+     return k if !Primes.isPrimeStr?(a) || !Primes.isPrimeStr?(b)
+    end
+    return PRESENT
+  end
+
+end
+
+
+candidates = []
+candidates_by_prime = Hash.new([])
+
+Primes.primes.each do |p|
+  candidates.each do |c|
+    next if c.flagged?(p)
+    m = c.check(p)
+    if m == PRESENT
+      c.add(p) 
+      candidates_by_prime[p] << c
+      puts c if c.size > 3
+    else
+      candidates_by_prime[m].each do |cc|
+        cc.flag(m)
+      end
+    end
+  end
+  cand = CandidateSet.new(p)
+  candidates << cand
+  candidates_by_prime[p] << cand if p < 1000
+end
+
+puts "No answer found."
+

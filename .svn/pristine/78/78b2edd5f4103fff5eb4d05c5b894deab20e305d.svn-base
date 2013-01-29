@@ -1,0 +1,52 @@
+require 'pp'
+
+@values = {
+  'I' => 1,
+  'V' => 5,
+  'X' => 10,
+  'L' => 50,
+  'C' => 100,
+  'D' => 500,
+  'M' => 1000
+}
+
+
+def int_to_roman(n)
+  order = ['M', 'D', 'C', 'L', 'X', 'V', 'I']
+  roman = ""
+  order.each do |i|
+    while n >= @values[i]
+      roman += i
+      n -= @values[i]
+    end
+  end
+  return roman
+end
+
+
+def roman_to_int(s)
+  arr = s.split("")
+  i   = 0
+  sum = 0
+  while i < s.length
+    if i < arr.length - 1 and @values[arr[i]] < @values[arr[i+1]]
+      sum -= @values[arr[i]]
+      sum += @values[arr[i+1]]
+      i += 2
+    else
+      sum += @values[arr[i]]
+      i += 1
+    end
+  end
+  return sum
+end
+
+puts int_to_roman(49)
+puts roman_to_int(int_to_roman(49))
+exit
+
+f = File.open("89-numbers.txt")
+
+f.each do |line|
+  puts roman_to_int(line.strip)
+end

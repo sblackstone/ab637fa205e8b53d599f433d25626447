@@ -1,0 +1,47 @@
+require 'pp'
+
+def gcd(a,b)
+  while b > 0
+    t = b
+    b = a % b
+    a = t
+  end
+  return a
+end
+
+
+
+MAX = 5000
+BAD = -999999999
+def sol?(len)
+  return false if len < 12
+  1.upto(len/2) do |m|
+    n = (len / (2.0*m)) - m
+    return true if m > n and gcd(m,n) == 1
+
+  end
+  return false
+end
+
+solutions = Hash.new(0)
+
+scount = 0
+(12..MAX).step(2) do |i|
+  next if solutions[i] >= 1
+  if sol?(i)
+    solutions[i] = 1
+    mult = i+i
+    while mult <= MAX
+      if solutions[mult] > 0 and i % solutions[mult] > 0
+        solutions[mult] = BAD
+      else
+        solutions[mult] = i
+      end
+      mult = mult + i
+    end
+  end
+  #puts i
+end
+solutions.sort.each do |k,v|
+  puts "#{k} #{v}" unless v == BAD
+end

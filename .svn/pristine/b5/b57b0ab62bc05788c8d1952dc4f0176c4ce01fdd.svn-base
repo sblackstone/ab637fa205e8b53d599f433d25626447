@@ -1,0 +1,65 @@
+require 'primes'
+require 'pp'
+
+def slow_totient(n)
+  count = 0
+  return 1 if n == 1
+  (n-1).downto(1) do |i|
+    if gcd(i,n) == 1
+      count += 1
+    end
+  end
+  count
+end
+
+
+SIZE = 10**2
+
+
+@totients = Array.new(SIZE+1)
+
+1.upto(SIZE+1) do |i|
+  @totients[i] = Array.new(2,1)
+end
+
+ptr = 2
+
+while ptr <= SIZE
+  ptr += 1
+  if @totients[ptr][0] == 1
+    @totients[ptr][0] = ptr - 1
+    ptr2  = ptr + ptr
+    while ptr2 <= SIZE
+      @totients[ptr2][0] *= (ptr - 1)
+      @totients[ptr2][1] *= ptr
+      ptr2 += ptr
+    end
+  end  
+end
+
+pp @totients[4]
+
+1.upto(SIZE) do |i|
+  @totients[i][0] *= i unless @totients[i][0] == i - 1
+end
+
+pp @totients[4]
+
+
+
+
+count = 0
+1.upto(SIZE) do |check|
+  puts "#{check} not done" if @totients[check].nil?
+  
+  if slow_totient(check) != (@totients[check][0] / @totients[check][1]) and !@totients[check].nil?
+    puts "wrong #{check}" 
+    puts "should #{slow_totient(check)}" 
+    puts "is #{(@totients[check][0] / @totients[check][1])}"
+    puts "---"
+  end
+  
+  count += 1 if @totients[check].nil?
+end
+puts count
+

@@ -1,0 +1,29 @@
+require 'primes'
+require 'pp'
+
+
+SIZE = 10**6
+
+Primes.setup(SIZE)
+
+totients = Array.new(SIZE,nil)
+
+puts "setup complete"
+
+
+Primes.primes.each do |p|
+  totients[p] = p - 1;
+  i = 2
+  while p**i <= SIZE 
+    totients[p**i] = p**(i-1)*(p-1)
+    i += 1
+  end
+end
+
+count = 0
+
+totients.each do |k,v|
+  count +=1 unless v.nil?
+end
+
+puts count

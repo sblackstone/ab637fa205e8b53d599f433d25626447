@@ -1,0 +1,69 @@
+require 'primes'
+require 'pp'
+
+def slow_totient(n)
+  count = 0
+  return 1 if n == 1
+  (n-1).downto(1) do |i|
+    if gcd(i,n) == 1
+      count += 1
+    end
+  end
+  count
+end
+
+
+SIZE = 10**6
+
+Primes.setup(SIZE)
+
+@totients = Array.new(SIZE+1)
+@totients[1] = [1,1]
+1.upto(SIZE+1) do |i|
+  @totients[i] = Array.new(2,1)
+end
+
+ptr = 1
+
+Primes.primes.each do |p|
+  @totients[p][0] = p - 1
+  @totients[p][1] = 1
+  ptr2 = p * 2
+  while ptr2 <= SIZE
+    @totients[ptr2][0] *= (p - 1)
+    @totients[ptr2][1] *= p
+    ptr2 += p
+  end
+  
+end
+
+
+1.upto(SIZE) do |i|
+  @totients[i][0] *= i unless Primes.isPrime?(i)
+end
+
+puts "Complete, checking"
+
+sum = 0
+1.upto(SIZE) do |i|
+  sum += (@totients[i][0] / @totients[i][1])
+end
+puts sum - 1
+
+
+=begin
+count = 0
+1.upto(SIZE) do |check|
+  puts "#{check} not done" if @totients[check].nil?
+  
+  if slow_totient(check) != (@totients[check][0] / @totients[check][1]) and !@totients[check].nil?
+    puts "wrong #{check}" 
+    puts "should #{slow_totient(check)}" 
+    puts "is #{(@totients[check][0] / @totients[check][1])}"
+    puts "---"
+  end
+  
+  count += 1 if @totients[check].nil?
+end
+puts count
+=end

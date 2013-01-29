@@ -1,21 +1,23 @@
+require 'rubygems'
+require 'bitset'
 require 'pp'
 
+MAX_PRIMES = 10_000_000
 
+@b = Bitset.new(MAX_PRIMES)
 
-def dist(n,k,val,track)
-  if n == 0
-    @track[val] += 1
-    return
-  end
-  1.upto(k) do |i|
-    dist(n-1,k,val+i,track)
+2.upto(MAX_PRIMES-1) do |i|
+  @b.set(i)
+end
+
+2.upto(MAX_PRIMES-1) do |i|
+  if @b.set?(i) 
+    j = i*i
+    while j < MAX_PRIMES
+      @b.clear(j)
+      j += i
+    end
   end
 end
 
-@track = Hash.new(0)
 
-
-dist(20,20,0,@track)
-
-
-pp @track

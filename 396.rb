@@ -35,6 +35,8 @@ def find(n)
 end
 
 
+puts find(5) - 1
+exit
 
 total = -7
 

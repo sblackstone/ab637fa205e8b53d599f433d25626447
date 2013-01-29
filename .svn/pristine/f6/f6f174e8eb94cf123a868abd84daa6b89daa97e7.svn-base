@@ -1,0 +1,37 @@
+require 'pp'
+f  = File.open("base_exp.txt")
+
+@pairs = Array.new
+
+def log(base,x)
+  return Math.log(x) / Math.log(base)
+end
+
+class Exp
+
+  def initialize(base,exp)
+    @base = base
+    @exp  = exp  
+  end
+  
+  def norm
+    Math.log(@base) * @exp
+  end
+  
+  
+  def <=>(other)
+    other.norm <=> self.norm
+  end
+  
+  
+end
+
+
+
+while (line = f.gets)
+  b,e = line.strip.split(",").map(&:to_i)
+  @pairs << Exp.new(b,e)
+end
+
+
+pp @pairs.sort

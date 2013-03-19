@@ -13,26 +13,27 @@ It is possible to write ten as the sum of primes in exactly five different ways:
 What is the first value which can be written as the sum of primes in over five thousand different ways?
 =end
 
-Primes.setup(100)
-num = Primes.primes.length
 
-@answer = Array.new(num, 0)
+@total = 0
+MAX = 500
+Primes.setup(MAX)
 
 @track = Hash.new(nil)
 
-def count
-  0.upto(10) do |c|
-    0.upto(num) do |n|
-      @track[n] = c
-      count
-      @track[n] = 0
-    end
-    
+def sol(n,last_prime)
+  if n == 0
+    return 1
+  end  
+  total = 0
+  Primes.primes.each do |p|
+    break if p > n ||  p > last_prime
+    m = n - p
+    total += sol(m,p)
   end
-  
-  
+  return total
 end
 
-
-
+2.upto(MAX) do |i|
+  puts "#{i}: #{sol(i,i)}"
+end
 

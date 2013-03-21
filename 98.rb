@@ -18,50 +18,56 @@ end
 
 
 @anagrams.reject! {|k,v| v.size < 2 }
-
-x = 1
-@squares = Array.new(10)
+@squares = Hash.new(false)
 @dsquares = Array.new(10)
-@all_squares = Hash.new(false)
-while (x**2 < 10**10)
-  xsquared = (x**2).to_s
-  @all_squares[xsquared] = true
-  if xsquared.split("").sort.uniq.size == xsquared.size
-    @squares[xsquared.size] ||= Array.new
-    @squares[xsquared.size] << xsquared.to_s
-  else
-    @dsquares[xsquared.size] ||= Array.new
-    @dsquares[xsquared.size] << xsquared.to_s    
-  end
-  x += 1
+
+1.upto(10**5) do |i|
+  @squares[i**2] = true
+  digits = (Math.log(i**2) / Math.log(10)).floor + 1
+  @dsquares[digits] ||= Array.new
+  @dsquares[digits].push(i**2)
 end
 
-def test_no_dupes(w1, w2)
-  ww1 = w1.split("")
-  0.upto(@squares[w1.length].length - 1) do |i|
-    test = w2.clone
-    map = @squares[w1.length][i]
-    ww1.each_with_index do |c,i|
-      test.tr!(c, map[i].chr)
+def check(word1, square, word2)
+  # we assume the digits in square are the same number as the letters in "word"
+  track = Hash.new(nil)
+  ssquare = square.to_s
+  0.upto(ssquare.size - 1) do |i|
+    if track[ssquare[i]].nil?
+      track[ssquare[i]] = word1[i]
+    elsif track[ssquare[i]] != word1[i]
+      return -1
     end
-    return [map.to_i,test.to_i].max if @all_squares[test]
+    if track[word1[i]].nil?
+      track[word1[i]] = ssquare[i]
+    elsif track[word1[i]] != ssquare[i]
+      return -1
+    end
   end
-  return false
+  return false if track[word2[0]] == "0"
+  nsquare = ""
+  0.upto(word2.size - 1) do |i|
+    nsquare += track[word2[i]]
+  end
+  return @squares[nsquare.to_i] ? nsquare.to_i : -1
 end
 
 
-@anagrams.each do |k,v|
-  arr = k.split("")
-  if arr.size == arr.sort.uniq.size
-    v.combination(2).each do |y|
-      ans = test_no_dupes(y[0], y[1])
-      if (ans)
-        puts "#{y[0]} #{y[1]} #{ans}"
+9.downto(2) do |i|
+  @anagrams.each do |k,v|
+    if k.size == i
+      v.combination(2).each do |y|
+        @dsquares[i].each do |square|
+          r = check(y[0], square, y[1])
+          if r && r > 0
+            pp y[0]
+            pp y[1]
+            pp r
+            pp square
+            puts "*" * 25
+          end
+        end        
       end
-    end
-  else
-    print "\tSPECIAL CASE: "    
-    pp v
-  end  
+    end    
+  end
 end
-

@@ -10,19 +10,40 @@ Find the least value of n for which the remainder first exceeds 10**10.
 
 require './primes.rb'
 
+CUTOFF = 10**10
+
 Primes.setup(1_000_000)
 
-Primes.primes.each_with_index do |p,i|
+def modpow(b,e,m)
+  result = 1
+  while e > 0
+    if (e & 1) == 1
+      result = (result * b) % m;
+    end
+    e = e >> 1;
+    b = (b * b) % m;
+  end
+  return result
+end
+
+i = 2
+
+while i < Primes.primes.size
+  p = Primes.primes[i]
   n = i + 1
-  a = (p+1)**n
-  b = (p-1)**n
-  v = (a+b) % p**2
-  puts n
-  if (v > 10**9)
+  a = modpow(p+1, n, p*p)
+  b = modpow(p-1, n, p*p)
+  v = (a+b) % (p*p)
+  if (v > CUTOFF)
     puts v
     puts p
     puts i
     puts n
     exit
   end
+  i += 2
 end
+
+
+
+

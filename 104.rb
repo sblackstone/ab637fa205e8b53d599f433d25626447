@@ -1,22 +1,41 @@
-a = 1
-b = 1
-c = a + b
-count = 3
+require 'bigdecimal'
+require 'pp'
+
+
+five = BigDecimal.new("5")
+@sq5 = five.sqrt(16)
+
+def fib(n)
+  ((1 + @sq5)**n - (1 - @sq5)**n)/(2**n*@sq5)
+end
+
+def beginning(n)
+  return n.round.to_s[0,9].split("").sort.join("")
+end
+
+
+a  = 0
+b  = 1
+k  = 0
+
 while true 
-  s = c.to_s
-  if s[0,9].split("").sort.join("") == "123456789"
-    puts "#{count} covers start"
-    if s[-9,9].split("").sort.join("") == "123456789"
-      puts "covers end"
-      puts count
+  e = a % 10**9
+  d = e.to_s.split("").sort.join("")
+  if d =="123456789"
+    print "Testing #{k}"
+    if beginning(a) == "123456789"
+      puts "Found: #{k}"
       exit
+    else 
+      puts "... no"
     end
   end
-  
-   
-  count +=1
-  #puts s
+  c = (a+b)
   a = b
   b = c
-  c = a + b  
+  k +=1
 end
+
+
+
+

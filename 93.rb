@@ -78,30 +78,12 @@ class Frac
     result.simplify
   end
 end
-3
 
-@ops = ['+', '-', '/', '*']
 
-def eval_all_op(nums, h, str = nil)
-  if nums.size == 1     
-    if nums.first.n > 0 and nums.first.d == 1
-      #puts "#{str} = #{nums.first}" 
-      h[nums.first.n] = true 
-    end
-    return
-  end
-  @ops.each do |op|
-    a = nums.shift
-    b = nums.shift
-    s = str.nil? ? "#{a} #{op} #{b}" : "#{str} #{op} #{b}"
-    nums.unshift eval("a #{op} b")
-    eval_all_op(nums, h, s)
-    nums.shift
-    nums.unshift b
-    nums.unshift a
-  end
-  
-end
+
+
+@ops = ['+', '-', '*', '/']
+
 
 def answer_length(ans)
   ans.sort!
@@ -110,37 +92,48 @@ def answer_length(ans)
   end
 end
 
+def eval_all(exp, h)
+  t0 = "exp[0]"
+  t1 = "exp[2]"
+  t2 = "exp[4]"
+  t3 = "exp[6]"
+  o1 = exp[1]
+  o2 = exp[3]
+  o3 = exp[5]
+  #pp exp 
 
-def eval_set(set)
-  h = Hash.new
-  set.combination(4) do |c|
-    c.permutation do |p|
-      eval_all_op(p,h)
-      @ops.combination(2) do |o_perm|
-        [0,1,2,3].permutation do |p2|  
-          eval_all_op([eval("p[p2[0]] #{o_perm[1]} p[p2[1]]"), eval("p[p2[2]] #{o_perm[0]} p[p2[3]]")],h)      
-          eval_all_op([eval("p[p2[0]] #{o_perm[0]} p[p2[1]]"), eval("p[p2[2]] #{o_perm[1]} p[p2[3]]")],h)      
-          eval_all_op([eval("p[p2[0]] #{o_perm[0]} p[p2[1]]"), eval("p[p2[2]] #{o_perm[0]} p[p2[3]]")],h)      
-          eval_all_op([eval("p[p2[0]] #{o_perm[1]} p[p2[1]]"), eval("p[p2[2]] #{o_perm[1]} p[p2[3]]")],h)      
+  par = [
+    "((#{t0} #{o1} #{t1}) #{o2} #{t2}) #{o3} #{t3}", #123
+    "(#{t0} #{o1} #{t1}) #{o2} (#{t2} #{o3} #{t3})", #132, 312
+    "#{t0} #{o1} (#{t1} #{o2} (#{t2} #{o3} #{t3}))", #321
+    "(#{t0} #{o1} (#{t1} #{o2} #{t2})) #{o3} #{t3}",
+    "#{t0} #{o1} ((#{t1} #{o2} #{t2}) #{o3} #{t3})",
+    
+  ]
 
-        end
-      end  
-
-    end
+  par.each do |p|
+    v = eval p
+    h[v.n] = true if v.n > 0 and v.d == 1
   end
-  h.keys.sort
 end
 
 
-=begin
-nums = [2,6,7,9]
+def eval_set(set)
+  h = Hash.new
+  set.map! {|x| Frac.new(x)}
+  set.permutation do |p|
+    @ops.repeated_combination(3) do |oc|
+      oc.permutation do |op|
+        exp = p.zip(op).flatten
+        exp.delete_at(7)
+        eval_all(exp, h)
+      end
+    end
+  end
+  return h.keys.sort
+end
 
-nums.map! {|x| Frac.new(x) }
 
-pp eval_set(nums)
-
-exit
-=end
 cur_answer = nil
 max_length = 0
 
@@ -148,7 +141,7 @@ max_length = 0
   (a+1).upto(9) do |b|
     (b+1).upto(9) do |c|
       (c+1).upto(9) do |d|
-        l = answer_length(eval_set([Frac.new(a), Frac.new(b), Frac.new(c), Frac.new(d)]))
+        l = answer_length(eval_set([a,b,c,d]))
         puts "#{a}#{b}#{c}#{d}: #{l}"
         if l > max_length
           max_length = l
@@ -159,6 +152,7 @@ max_length = 0
   end
 end
 
+pp cur_answer
+pp max_length
 
-puts max_length
-puts cur_answer
+

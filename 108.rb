@@ -12,60 +12,107 @@ NOTE: This problem is an easier version of problem 110; it is strongly advised t
 1/x + 1/y = 1/n
 
 
+n/x + n/y = 1
+
+n + nx/y = x
+ny + nx = xy
+
+n(x+y) = xy
+
+n = xy / (x+y)
+n(x+y) = xy
+
+nx + ny = xy
+
+
+
+xy must be some multiple of n <=> n = k*xy
+xy must be greater than n <=> k > 1
+
+
+===== SOOOO
+
+y =  nx / (x - n) 
+x =  ny / (y - n)
+
+=====
+
+x = k*m*(m+n)
+y = k*n*(m+n)
+
 
 
 
 
 =end
 
+
 require 'pp'
+
 require './primes.rb'
 
+Primes.setup(1_000_000)
 
-# n(x+y) = xy
-def solutions(n) 
-  i = 1
-  while true
-    xy = n*i
-    puts "#{xy} #{xy/n}"
-    i +=1
+
+@pdivisors = Array.new(1_000_000)
+
+0.upto(1_000_000) {|i| @pdivisors[i] = Array.new }
+
+Primes.primes.each do |p|
+  pk = p
+  break if p > 1_000_000
+  while pk < 1_000_000
+    @pdivisors[pk].push p
+    pk += p
   end
-  
 end
 
 
-solutions(4)
+def sigma_n(n)
+  sum = 1
+  @pdivisors[n].each do |p|
+    tn = n
+    k = 0
+    while tn % p == 0
+      tn /= p
+      k += 1
+    end
+    sum *= (k + 1)  
+  end
+  sum
+end
 
 
-=begin
-Primes.setup(100)
+# http://answers.yahoo.com/question/index?qid=20101205221817AA9vNp7
+# this function calculates number of divisors in n squared.
+def sigma_n2(n)
+  sum = 1
+  @pdivisors[n].each do |p|
+    tn = n
+    k = 0
+    while tn % p == 0
+      tn /= p
+      k += 1
+    end
+    sum *= (2*k + 1)  
+  end
+  sum
+end
+
 
 
 def solutions(n)
-  return 2 if Primes.isPrime?(n)  
-  count = 0
-  x = n 
-  while true
-    x += 1
-    if (n*x) % (x-n) == 0
-      y = (n*x) / (x - n)
-      count += 1
-      puts "#{x} #{y}"
-      break if x == y
-    end
-  end
-  return(count)
+  (sigma_n2(n) + 1) / 2
 end
 
 
-puts solutions(90)
-exit
-
-i = 1
+i = 2
 while true
-  s = solutions(i)
-  print "#{i}: #{s}\n"
-  break if i > 100
+  v = solutions(i)
+  puts i
+  if v >= 1000
+    puts "#{i}: #{v}"
+    exit
+  end
   i += 1
 end
-=end

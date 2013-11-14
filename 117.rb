@@ -11,43 +11,25 @@ require 'pp'
 
 @cache = Hash.new(nil)
 
-=begin
-def tile(block, container) 
-  @cache["#{block}:#{container}"] ||= do_tile(block,container)
-end
-
-
-def do_tile(block, container)
-  return 2 if block == container
-  return 1 if block > container
-  sum = 0
-  0.upto(container - block) do |leading_blanks|
-    sum += tile(block, container - leading_blanks - block)
-    sum += 1 if container - leading_blanks - block > block
-  end
-  sum 
-end
-
-puts tile(2,50) + tile(3,50) + tile(4,50)
-
-=end
-
-
 @t_cache = Hash.new
 def tile(container)
   @t_cache[container] ||= do_tile(container)
 end
 
 def do_tile(container)
+  return 0 if container < 0
   return 1 if container == 0
   sum = 0
-    1.upto(4) do |block_size|
-      next if block_size > container
-      sum += tile(container  - block_size)
-    end
+  1.upto(4) do |block_size|
+    sum += tile(container  - block_size)
+  end
   return sum
 end
 
 
 
-puts do_tile(50)
+do_tile(1000)
+do_tile(2000)
+do_tile(3000)
+do_tile(4000)
+puts do_tile(5000)

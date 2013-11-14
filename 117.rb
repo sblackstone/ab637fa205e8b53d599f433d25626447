@@ -28,8 +28,4 @@ end
 
 
 
-do_tile(1000)
-do_tile(2000)
-do_tile(3000)
-do_tile(4000)
-puts do_tile(5000)
+puts do_tile(50)

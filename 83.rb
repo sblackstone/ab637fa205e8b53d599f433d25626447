@@ -12,17 +12,18 @@ require 'csv'
 require 'pp'
 
 class Node
-  attr_reader :value, :row, :col, :hash
-
+  attr_reader :value, :row, :col
   attr_accessor :neighbors, :up, :down, :left, :right
-
+    
   def ==(other)
-    self.hash == other.hash
+    self.row == other.row and self.col == other.col
   end
 
   alias eql? == 
 
-
+  def hash
+    @row * 10000 + @col
+  end
 
   def to_s
     "(#{@row},#{@col})"
@@ -34,8 +35,6 @@ class Node
     @neighbors = Array.new
     @row   = row
     @col   = col
-    @hash  = row * 10000 + col
-
     @up    = nil
     @down  = nil
     @left  = nil
@@ -67,57 +66,65 @@ end
       @matrix[row][col].up =             @matrix[row-1][col] unless row == 0
       @matrix[row][col].neighbors.push   @matrix[row][col+1] unless col == @matrix[0].length - 1
       @matrix[row][col].right =          @matrix[row][col+1] unless col == @matrix[0].length - 1
-      #@matrix[row][col].neighbors.push  @matrix[row][col-1] unless col == 0
-      #@matrix[row][col].left =           @matrix[row][col-1]   unless col == 0
+      @matrix[row][col].neighbors.push  @matrix[row][col-1] unless col == 0
+      @matrix[row][col].left =           @matrix[row][col-1]   unless col == 0
   end  
 end
 
-@h_cache = Hash.new(false)
 
-@matrix.flatten.each do |n|
-  @h_cache[n] = (@matrix.length-1 - n.col).abs
+def h(node, goal)
+  return 0 if node == goal
+  sum = 0
+  while !node.right.nil?
+    sum += 1
+    node = node.right
+  end
+  while node.row < goal.row
+    sum += 1
+    node = node.down
+  end
+  while node.row > goal.row
+    sum += 1
+    node = node.up
+  end
+  return sum 
 end
 
 
-def h(node)
-  @h_cache[node]
-end
-
-
-def a_star(start)
-  closedset = Hash.new(false)
-  openset   = Hash.new(false)
-  openset[start] = 0
+def a_star(start,goal)
+  closedset = Array.new
+  openset   = [ start ]
   came_from = Hash.new
   g_scores  = Hash.new
   f_scores  = Hash.new  
   g_scores[start] = 0
-  f_scores[start] = g_scores[start] + h(start)
+  f_scores[start] = g_scores[start] + h(start, goal)
   until openset.empty?
-    current = openset.keys.first    
-    #puts openset.size
-    openset.keys.each do |os|
+    current = openset.first    
+    openset.each do |os|
       if f_scores[os] < f_scores[current]
         current = os
       end
     end
-    return came_from,current if current.col ==  @matrix.length-1
+    return came_from if current == goal
 
-    #puts "Expanding #{current}"
+    puts "Expanding #{current}"
     # Current is now the item from open set with the lowest f_score..
     openset.delete current    
-    closedset[current] = true
+    closedset.push current
     current.neighbors.each do |neighbor|
       t_g_score = g_scores[current] + neighbor.value
-      t_f_score = t_g_score + h(neighbor)
-      if closedset[neighbor] and t_f_score >= f_scores[neighbor]
+      t_f_score = t_g_score + h(neighbor, goal)
+      if closedset.include? neighbor and t_f_score >= f_scores[neighbor]
         next 
       end
       if !openset.include? neighbor or t_f_score < f_scores[neighbor]
         came_from[neighbor] = current
         g_scores[neighbor] = t_g_score
         f_scores[neighbor] = t_f_score
-        openset[neighbor] = true
+        if !openset.include? neighbor
+          openset.push neighbor
+        end      
       end
     end
   end
@@ -127,23 +134,19 @@ end
 def reconstruct_path(came_from, current)
   if came_from.keys.include? current
     p = reconstruct_path(came_from, came_from[current])
-    return [ p, current].flatten
+    return [ p, current.value].flatten
   else
-    return [ current ]
+    return [ current.value ]
   end
 end
 
 puts "Starting A*"
 
-min = 9999999999
-0.upto(79) do |i|
-  start = @matrix[i][0]
-  cf,g = a_star(start)
-  path = reconstruct_path(cf ,  g )
-  v = path.map {|x| x.value}.inject(&:+)    
-  min = v if v < min
-  puts "#{i}: #{v}"
-end
 
-puts "Min: #{min}"
+cf = a_star(@matrix[0][0], @matrix[79][79])
+
+pp reconstruct_path(cf ,  @matrix[79][79] )
+pp reconstruct_path(cf ,  @matrix[79][79] ).inject(&:+)
+
+
 

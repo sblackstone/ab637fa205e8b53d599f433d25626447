@@ -1,97 +1,152 @@
-require 'pp'
+=begin
+
+131,673,234,103,18
+201,96,342,965,150
+630,803,746,422,111
+537,699,497,121,956
+805,732,524,37,331
+
+=end
+
 require 'csv'
+require 'pp'
 
-WIDTH  = 80
-HEIGHT = 80
-START = WIDTH+3
-GOAL  = (WIDTH+2)*(HEIGHT+2)-WIDTH-4
-
-@f_score = Hash.new
-@g_score = Hash.new
-@closedset = Hash.new(false)
-@openset   = Array.new
-@came_from = Hash.new(nil)
-
-def h(s)
-  return 0 if s == GOAL
-  guess = 0
-  while !@matrix[s+1].nil?
-    guess += @matrix[s+1]
-    s += 1
+class Node
+  attr_reader :value, :row, :col
+  attr_accessor :neighbors, :up, :down, :left, :right
+    
+  def ==(other)
+    self.row == other.row and self.col == other.col
   end
-  while !@matrix[s+WIDTH+2].nil?
-    guess += @matrix[s+WIDTH+2]
-    s += WIDTH+2
+
+  alias eql? == 
+
+  def hash
+    @row * 10000 + @col
   end
-  return guess
-end
 
-def choose_current
-  best = 999999999
-  @openset.each do |os|
-    if os < best
-      best = os
-    end
+  def to_s
+    "(#{@row},#{@col})"
   end
-  return best
-end
-
-
-def neighbor_nodes(s)
-  nodes = Array.new
-  nodes << (s+1) unless @matrix[s+1].nil?
-  nodes << (s+WIDTH+2) unless @matrix[s+WIDTH+2].nil?
-  return nodes  
-end
-
-def reconstruct_path(came_from, current_node)
-  puts @matrix[current_node]
-  p = 0
-  if came_from[current_node]
-    p = reconstruct_path(came_from, came_from[current_node])
-    return(p+@matrix[current_node])
-  else
-    return @matrix[current_node]
+  
+    
+  def initialize(value, row, col)
+    @value = value
+    @neighbors = Array.new
+    @row   = row
+    @col   = col
+    @up    = nil
+    @down  = nil
+    @left  = nil
+    @right = nil
   end
+  
 end
-
-
-def a_star(start, goal)
-  @g_score[start] = @matrix[start]  
-  @f_score[start] = @g_score[start] + h(start)
-  @openset.push(start)
-  while !@openset.empty?
-    current = choose_current
-    if (current == goal)
-      return reconstruct_path(@came_from, current)
-    end
-    @openset.delete(current)
-    @closedset[current] = true
-    @neighbors = neighbor_nodes(current)
-    @neighbors.each do |neighbor|
-      next if @closedset[neighbor]
-      tentative_g = @g_score[current] + @matrix[neighbor]
-      if !@openset.include?(neighbor) or tentative_g < @g_score[neighbor]
-        @openset.push(neighbor)
-        @came_from[neighbor] = current
-        @g_score[neighbor] = tentative_g
-        @f_score[neighbor] = @g_score[neighbor] + h(neighbor)
-      end
-    end    
-  end
-  return false
-end
-
-
 
 @matrix = Array.new
-@matrix << Array.new(WIDTH+2, nil)
+row_num = 0
 CSV.foreach("./81-matrix.txt") do |row|
- r = row.map {|x| x.to_i }
- r.unshift(nil)
- r.push(nil)
- @matrix << r
+ col_num = 0
+ row_a = Array.new
+
+ row.each do |x|
+   row_a.push Node.new(x.to_i, row_num, col_num)
+   col_num += 1
+ end
+ 
+ @matrix << row_a
+ row_num += 1
 end
-@matrix << Array.new(WIDTH+2, nil)
-@matrix.flatten!
-pp a_star(START, GOAL)
+
+0.upto(@matrix.length-1) do |row|
+  0.upto(@matrix[0].length-1) do |col|
+      @matrix[row][col].neighbors.push   @matrix[row+1][col] unless row == @matrix.length-1
+      @matrix[row][col].down =           @matrix[row+1][col] unless row == @matrix.length-1    
+      #@matrix[row][col].neighbors.push   @matrix[row-1][col] unless row == 0
+      #@matrix[row][col].up =             @matrix[row-1][col] unless row == 0
+      @matrix[row][col].neighbors.push   @matrix[row][col+1] unless col == @matrix[0].length - 1
+      @matrix[row][col].right =          @matrix[row][col+1] unless col == @matrix[0].length - 1
+      #@matrix[row][col].neighbors.push  @matrix[row][col-1] unless col == 0
+      #@matrix[row][col].left =           @matrix[row][col-1]   unless col == 0
+  end  
+end
+
+
+def h(node, goal)
+  return 0 if node == goal
+  sum = 0
+  while !node.right.nil?
+    sum += 1
+    node = node.right
+  end
+  while node.row < goal.row
+    sum += 1
+    node = node.down
+  end
+  while node.row > goal.row
+    sum += 1
+    node = node.up
+  end
+  return sum 
+end
+
+
+def a_star(start,goal)
+  closedset = Array.new
+  openset   = [ start ]
+  came_from = Hash.new
+  g_scores  = Hash.new
+  f_scores  = Hash.new  
+  g_scores[start] = 0
+  f_scores[start] = g_scores[start] + h(start, goal)
+  until openset.empty?
+    current = openset.first    
+    openset.each do |os|
+      if f_scores[os] < f_scores[current]
+        current = os
+      end
+    end
+    return came_from if current == goal
+
+    puts "Expanding #{current}"
+    # Current is now the item from open set with the lowest f_score..
+    openset.delete current    
+    closedset.push current
+    current.neighbors.each do |neighbor|
+      t_g_score = g_scores[current] + neighbor.value
+      t_f_score = t_g_score + h(neighbor, goal)
+      if closedset.include? neighbor and t_f_score >= f_scores[neighbor]
+        next 
+      end
+      if !openset.include? neighbor or t_f_score < f_scores[neighbor]
+        came_from[neighbor] = current
+        g_scores[neighbor] = t_g_score
+        f_scores[neighbor] = t_f_score
+        if !openset.include? neighbor
+          openset.push neighbor
+        end      
+      end
+    end
+  end
+  came_from
+end
+
+def reconstruct_path(came_from, current)
+  if came_from.keys.include? current
+    p = reconstruct_path(came_from, came_from[current])
+    return [ p, current.value].flatten
+  else
+    return [ current.value ]
+  end
+end
+
+puts "Starting A*"
+
+
+cf = a_star(@matrix[0][0], @matrix[79][79])
+
+pp reconstruct_path(cf ,  @matrix[79][79] )
+pp reconstruct_path(cf ,  @matrix[79][79] ).inject(&:+)
+
+
+

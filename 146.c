@@ -52,44 +52,44 @@ n^12+60 n^10+1281 n^8+12520 n^6+57819 n^4+112860 n^2+66339
 
 
 int main() {
-	mpz_t sum, n, n2;
-	mpz_init_set_ui(sum, 0);
-	mpz_init_set_ui(n, 0);
-	mpz_init(n2);
-	int flag;
-	int addens[6] = {1,2,4,2,4,14};
+  mpz_t sum, n, n2;
+  mpz_init_set_ui(sum, 0);
+  mpz_init_set_ui(n, 0);
+  mpz_init(n2);
+  int flag;
+  int addens[6] = {1,2,4,2,4,14};
   while (1) {
-		mpz_add_ui(n, n, 10);		
-		mpz_mul(n2, n, n);
-		flag = 1;
-		for (int i = 0; i < 6; i++) {
-			mpz_add_ui(n2, n2, addens[i]);
+    mpz_add_ui(n, n, 10);   
+    mpz_mul(n2, n, n);
+    flag = 1;
+    for (int i = 0; i < 6; i++) {
+      mpz_add_ui(n2, n2, addens[i]);
       if (mpz_probab_prime_p(n2, 4) == 0) {
-				flag = 0;
-				break;
+        flag = 0;
+        break;
       }
-		}
+    }
     if (flag) {
-			mpz_mul(n2, n, n);
-			for (int i = 1; i < 27; i++) {
-				mpz_add_ui(n2, n2, 1);
+      mpz_mul(n2, n, n);
+      for (int i = 1; i < 27; i++) {
+        mpz_add_ui(n2, n2, 1);
         if (i==1 || i==3 || i==7 || i==9 || i== 13 || i==27) {
-					continue;
+          continue;
         }
         if (mpz_probab_prime_p(n2, 4) > 0) {
-					flag = 0;
-					break;
+          flag = 0;
+          break;
         }
-			}
+      }
       if (flag) {
-				mpz_add(sum, sum, n);
-				printf("%s\n",  mpz_get_str(NULL, 10, n));		
+        mpz_add(sum, sum, n);
+        printf("%s\n",  mpz_get_str(NULL, 10, n));    
       }
 
     }
     if (mpz_get_ui(n) > MAX) {
-			break;
+      break;
     }
   }
-	printf("%s\n",  mpz_get_str(NULL, 10, sum));		
+  printf("%s\n",  mpz_get_str(NULL, 10, sum));    
 }

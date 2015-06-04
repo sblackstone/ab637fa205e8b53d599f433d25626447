@@ -18,11 +18,41 @@ n + 1 = a^i
 n + 1 = b^j 
 
  
+base 2:  1, 3, 7, 15
+ 
  
 =end
 
 require 'pp'
 
+t = Hash.new(0)
+
+sum = 1
+
+2.upto(10**8) do |b|
+  v = b*(b+1) + 1
+  if v > 10**12
+    break
+  end
+  
+  while v < 10**12
+    if t[v] == 0
+      sum += v
+    end    
+    t[v] += 1
+    v *= b
+    v += 1
+  end
+end
+
+puts sum
+
+
+
+
+
+
+=begin
 
 def calc_total(h)
   total = 0
@@ -47,4 +77,12 @@ def brute(max)
   calc_total(@h)  
 end
 
+
+
+@h = Hash.new
+
+
+
 puts brute(10**3)
+
+=end

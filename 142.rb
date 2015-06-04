@@ -27,7 +27,6 @@ end
     if (diff) % 2 == 0
       @track[s2 - (diff/2)] ||= Array.new
       @track[s2 - (diff/2)].push(diff/2)
-      #puts "#{s2 - (diff/2)} +- #{diff/2} is a perfect square (#{j} and #{i})"
     end
     
   end

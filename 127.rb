@@ -106,28 +106,3 @@ sum = 0
   end
 end
 puts "Sum = #{sum}"
-
-=begin
-sum = 0
-1.upto(1000) do |c|
-  unless @square_free[c]
-    ratio = c.to_f / @radicals[c]
-    @rad_values.each do |r1|
-      break if r1 > ratio
-      @rad_values.each do |r2|
-        break if r1*r2 > ratio || r1.gcd(r2) > 1
-        @rad_hash[r1].each do |a|
-          @rad_hash[r2].each do |b|
-            if c.gcd(a.gcd(b)) == 1 and a < b  and c < 1000
-              puts "#{a} #{b} #{c}"
-              sum += c
-            end
-          end
-        end    
-      end
-    end
-  end
-end
-
-puts sum
-=end

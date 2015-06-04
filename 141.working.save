@@ -1,0 +1,93 @@
+=begin
+
+Investigating progressive numbers, n, which are also square
+Problem 141
+A positive integer, n, is divided by d and the quotient and remainder are q and r respectively. In addition d, q, and r are consecutive positive integer terms in a geometric sequence, 
+but not necessarily in that order.
+
+For example, 58 divided by 6 has quotient 9 and remainder 4. It can also be seen that 4, 6, 9 are consecutive terms in a geometric sequence (common ratio 3/2).
+We will call such numbers, n, progressive.
+
+Some progressive numbers, such as 9 and 10404 = 102^2, happen to also be perfect squares.
+The sum of all progressive perfect squares below one hundred thousand is 124657.
+
+Find the sum of all progressive perfect squares below one trillion (1012).
+
+a < b < c
+
+n^2 = bc + a
+n^2 = ac + b <=> n^2 = b(b+1) <=> because b(b+1) is never a square, this can't occur.
+n^2 = ab + c <=> n^2 is evenly divisble by b which can't happen...
+
+a*c  = b**2
+
+
+n^2 - a = b*c
+
+n^2 = (a**2 + b**3) / a = b^3/a + a
+a divides b^3
+
+
+---
+
+a*r^(k+2)*a*r^(k+1) + a*r^(k+0)
+a*r^(k+0)*a*r^(k+2) + a*r^(k+1)
+a*r^(k+0)*a*r^(k+1) + a*r^(k+2)
+
+ 
+
+=end
+
+require 'pp'
+require './euler_lib.rb'
+
+
+
+MAX = 10**6
+
+
+def is_perfect_cube(n)
+  v = (n**(1/3.0)).round
+  return v**3 == n
+end
+
+def is_perfect_square(n)
+  v = Math.sqrt(n).round
+  return v*v == n
+end
+
+def multiples_of(n,max, &proc)
+  k = 2*n
+  while k < max
+    yield k
+    k += n
+  end  
+end
+
+
+ans = Array.new
+a = 1
+while true
+  a2 = a*a
+  break if a2 > MAX
+  (a+1).upto(MAX) do |b|
+    b3 = b**3    
+    break if b >= MAX
+    if b3 % a == 0
+      n = a2 + b3
+      n /= a
+      break if n > MAX
+      if is_perfect_square(n) 
+        c = (n - a) / b 
+        puts "#{n}:\ta=#{a}\tb=#{b}\tc=#{c}"
+        ans.push n
+      end      
+    end
+  end
+  a += 1
+end
+
+
+puts ans.inject(:+)
+
+exit

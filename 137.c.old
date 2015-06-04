@@ -1,0 +1,78 @@
+/*
+
+1 2 25
+2 15 1156
+3 104 54289
+4 714 2550409
+5 4895 119814916
+6 33552 5628750625
+7 229970 264431464441
+8 1576239 12422650078084
+9 10803704 583600122205489
+10 74049690 27416783093579881
+11 507544127 1288005205276048900
+
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <gmp.h>
+
+#define SIZE 1000
+
+int main() {
+
+	mpz_t tmp,n,val;
+	int nugget = 0;
+	
+	mpz_init_set_ui(n, 1);
+	mpz_init_set_ui(val, 8);
+  mpz_init(tmp);
+
+  while (nugget < 16) {
+		if (mpz_perfect_square_p(val)) {
+			nugget++;
+			printf("%i %s %s\n", nugget, mpz_get_str(NULL, 10, n), mpz_get_str(NULL, 10, val));
+		}
+		mpz_mul_ui(tmp, n, 10);
+		mpz_add(val, val, tmp);
+		mpz_add_ui(val, val, 7);		
+		mpz_add_ui(n, n, 1);
+  }
+	
+
+
+	
+/*	
+  mpz_t *sigm = malloc(sizeof(mpz_t) * (SIZE + 1));
+	mpz_t j2, total;
+	mpz_init(j2);
+	int k;
+	
+	for (int n=0; n < SIZE; n++) {
+		mpz_init_set_ui(sigm[n], 1);
+	}	  
+
+	for (int j = 2; j < SIZE; j++) {
+		mpz_set_ui(j2, j);
+		mpz_mul(j2, j2, j2);
+		k = j;
+		while (k < SIZE) {
+			mpz_add(sigm[k], sigm[k], j2);
+			k += j;
+		}
+	}
+
+	mpz_init_set_ui(total, 0);
+	for (int i = 0; i < SIZE; i++) {
+		if (mpz_perfect_square_p(sigm[i])) {
+  	 mpz_add_ui(total, total, i);
+		 printf("%i: %s\n", i, mpz_get_str(NULL, 10, sigm[i]));
+    }
+	}
+  printf("Total = %s\n", mpz_get_str(NULL, 10, total));
+*/
+
+  return(0);
+}

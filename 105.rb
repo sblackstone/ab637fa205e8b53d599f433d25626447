@@ -28,17 +28,8 @@ def no_equal_subsets(s)
       track[sum].each do |m|
         intersection = m & c
         if intersection.length == 0
-=begin
-          puts "Fail 2:"
-          pp m
-          pp c
-          pp m.inject(:+)
-          pp c.inject(:+)
-          puts "*" * 25
-=end
           return false
-        end
-        
+        end        
       end      
       track[sum].push c
     end
@@ -51,14 +42,10 @@ end
 def test(s)
   s.sort!
   return false unless s.uniq.size == s.size
-  2.upto(s.size) do |n|
+  2.upto((s.size / 2.0).ceil) do |n|
     a = s[0,n]
     b = s[s.length - n + 1, n-1]
     unless a.inject(:+) > b.inject(:+)
-      puts "Fail 1:"
-      pp a
-      pp b
-      puts "*" * 25
       return false 
     end
   end

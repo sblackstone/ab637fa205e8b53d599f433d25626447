@@ -21,17 +21,15 @@ n*p2 % 10**digits(p1) = p1
 require './primes.rb'
 
 Primes.setup(1_100_000)
-
-def digits(n)
-  return 1 if n < 10
-  return 2 if n < 100
-  return 3 if n < 1000
-  return 4 if n < 10_000
-  return 5 if n < 100_000
-  return 6 if n < 1_000_000
-  return 7 if n < 10_000_000
-  return 8 if n < 100_000_000
-  return 9 if n < 1_000_000_000
+exit
+def pow_10_ceil(n)
+  return 10 if n < 10
+  return 100 if n < 100
+  return 1000 if n < 1000
+  return 10_000 if n < 10_000
+  return 100_000 if n < 100_000
+  return 1_000_000 if n < 1_000_000
+  return 10_000_000 if n < 10_000_000
   throw "out of range"
 end
 
@@ -44,16 +42,13 @@ def extended_gcd(a, b)
     end
 end
 
-
-
 s = 0
 
 2.upto(Primes.primes.size - 1) do |i|
  a = Primes.primes[i]
  b = Primes.primes[i+1]
  break if a > 1_000_000
- d = digits(a)
- pow = 10**d
+ pow = pow_10_ceil(a)
  egcd = extended_gcd(b, pow)
  k = egcd[0]*a % pow
  s += k*b

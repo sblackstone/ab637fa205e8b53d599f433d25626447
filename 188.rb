@@ -13,11 +13,21 @@ Find the last 8 digits of 1777↑↑1855.
 
 
 =end
-require './primes.rb'
+
+
+def mod_pow(base, power, mod)
+ result = 1
+ while power > 0
+   result = (result * base) % mod if power & 1 == 1
+   base = (base * base) % mod
+   power >>= 1;
+ end
+ result
+end
 
 
 def h(a,b, n)
-    b == 1 ? a : ModMath.pow(a, h(a,b-1, n), n)
+    b == 1 ? a : mod_pow(a, h(a,b-1, n), n)
 end
 
 

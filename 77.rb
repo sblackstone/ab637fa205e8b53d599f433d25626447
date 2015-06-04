@@ -16,11 +16,16 @@ What is the first value which can be written as the sum of primes in over five t
 
 @total = 0
 MAX = 500
-Primes.setup(MAX)
+Primes.setup(1000)
 
 @track = Hash.new(nil)
 
 def sol(n,last_prime)
+  @track["#{n}:#{last_prime}"] ||= do_sol(n,last_prime)
+end
+
+
+def do_sol(n,last_prime)
   if n == 0
     return 1
   end  

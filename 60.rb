@@ -9,7 +9,7 @@ end
 def fast_prime(n)
   return true  if n == 2
   return false if n < 2
-  return false if n % 2 == 0
+  return false if n % 2 == 0 || n % 3 == 0 || n % 5 == 0 || n % 7 == 0
   @base = [31,73]
   d = n-1
   d >>= 1 while d & 1 == 0
@@ -76,7 +76,7 @@ num_primes = Primes.primes.size
               final << q
               pp final
               pp final.inject(&:+)
-              #exit
+              exit
             end
           end
         end

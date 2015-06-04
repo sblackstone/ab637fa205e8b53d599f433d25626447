@@ -125,3 +125,36 @@ def gcd(a,b)
   end
   return a
 end
+
+
+def miller(n)
+  return false if n < 2
+  return true  if n < 4
+  return false if n % 2 == 0
+  d = (n-1)
+  s = 0
+  while (d % 2 == 0)
+    s +=1
+    d /= 2
+  end
+  [2,3,5,7,11,13,17,19,23].each do |a|
+    x = ModMath.pow(a,d,n)
+    next if x == 1 or x == (n - 1) or n == a
+    skip = false
+    1.upto(s-1) do |k|
+      x = x*x % n
+      if x == 1
+        return false
+      elsif x == (n - 1)
+        skip = true
+        break
+      end
+    end
+    next if skip
+    return false
+  end
+  return true
+
+end
+
+

@@ -118,7 +118,6 @@ s = 0
   harshad_tree(k) do |r|
     s+= r
   end
-  
 end
 
 puts s

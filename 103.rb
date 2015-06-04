@@ -59,16 +59,6 @@ a+b+c > d+e
 
 require 'pp'
 
-=begin
-opt6 =  [11, 18, 19, 20, 22, 25]
-
-
-opt7 = opt6.map {|x| x -1}
-opt7.unshift 20
-pp opt7
-=end
-
-
 def no_equal_subsets(s)
   track = Hash.new
   2.upto(s.length) do |l|
@@ -79,11 +69,8 @@ def no_equal_subsets(s)
       track[sum].each do |m|
         intersection = m & c
         if intersection.length == 0
-          pp m
-          pp c
           return false
-        end
-        
+        end        
       end      
       track[sum].push c
     end
@@ -94,14 +81,63 @@ end
 
 
 def test(s)
-  return false unless s.uniq.size == s.size
   s.sort!
-  2.upto(s.size / 2) do |n|
+  return false unless s.uniq.size == s.size
+  2.upto((s.size / 2.0).ceil) do |n|
     a = s[0,n]
     b = s[s.length - n + 1, n-1]
-    return false unless a.inject(:+) < b.inject(:+)
+    unless a.inject(:+) > b.inject(:+)
+      return false 
+    end
   end
   return no_equal_subsets(s)      
 end
 
-pp test [1,2,3,4,5]
+
+
+
+
+
+
+
+
+@best = 256
+
+def reject(length, candidate)
+  return true if candidate.length > length
+  return false if candidate.length < 1
+  cur_sum = candidate.inject(:+)
+  return true if cur_sum >= @best
+  return true unless test(candidate)
+  return false
+end
+
+def accept(length, candidate)
+  if (candidate.length == length) && test(candidate)
+    @best = candidate.inject(:+)
+  end
+  
+end
+
+def bt(p,c)
+  if reject(p,c)
+    return
+  end
+  if accept(p,c)
+    print "#{c.inject(:+)}:\t"
+    puts c.join("")
+    return
+  end
+  
+  c.push (c.last || 0) + 1
+  while c.last < 50
+    bt(p,c)
+    c[c.length - 1] += 1
+  end
+  c.pop  
+end
+
+
+bt(7, Array.new)
+
+

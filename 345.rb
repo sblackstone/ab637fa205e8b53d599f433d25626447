@@ -9,7 +9,7 @@ equals 3315 ( = 863 + 383 + 343 + 959 + 767):
 
 
 
-m2 = [ [7,   53,  183, 439, 863],
+@m = [ [7,   53,  183, 439, 863],
        [497, 383, 563,  79, 973],
        [287, 63,  343, 169, 583],
        [627, 343, 773, 959, 943],
@@ -17,7 +17,7 @@ m2 = [ [7,   53,  183, 439, 863],
     ]
     
 
-m = [
+@m = [
     [7,53,183,439,863,497,383,563,79,973,287,63,343,169,583],
     [627,343,773,959,943,767,473,103,699,303,957,703,583,639,913],
     [447,283,463,29,23,487,463,993,119,883,327,493,423,159,743],
@@ -37,43 +37,68 @@ m = [
 
 
 
-@best = 0
-@best_nums = []
 
-def ms(m, row = 0, cols = [], nums = [], sum = 0, max_per_row = nil)  
+@best_per_col = Array.new(@m.length, 0)
+
+
+0.upto(@m.length - 1) do |col|
+  0.upto(@m.length - 1) do |row|
+    if @m[row][col] > @best_per_col[col] 
+      @best_per_col[col] =  @m[row][col]
+    end    
+  end
+end
+
+
+
+@best_sum = 0
+
+@rows_used = Array.new(100, false)
+
+
+
+def root
+  Array.new
+end
+
+
+def bt(col_choices, col, sum)
+
+    left = 0
+    (col).upto(@m.length - 1) do |j|
+      left += @best_per_col[j]
+    end
+    if sum+left <= @best_sum
+      return
+    end
+
+
+  if col_choices.length == @m[0].length && sum > @best_sum
+    @best_sum = sum
+    0.upto(@m.length - 1) do |col|
+    print "#{@m[col_choices[col]][col]} "
+    end
     
-  if row == m.length
-    @best = [sum, @best].max
+    pp sum
     return
   end
-  
-  if max_per_row.nil?
-    max_per_row = Array.new
-    0.upto(m.length - 1) do |r|
-      max_per_row[r] = m[r].max
+
+  0.upto(@m.length - 1) do |i|
+    unless @rows_used[i]
+      @rows_used[i] = true
+      col_choices.push i
+      bt(col_choices, col+1, sum + @m[col][i])
+      col_choices.pop
+      @rows_used[i] = false
+
     end
-    pp max_per_row
-  end
-  
     
-  0.upto(m.first.length-1) do |col|
-    unless cols.include? col
-      cols.push col    
-      sum += m[row][col]
-      nums.push m[row][col]
-      ms(m, row+1, cols, nums, sum, max_per_row)
-      nums.pop
-      sum -= m[row][col]
-      cols.delete col
-    end
   end
+  
   
 
 end
 
-ms(m2)
-
-pp @best
-
+bt(Array.new, 0, 0)
 
 

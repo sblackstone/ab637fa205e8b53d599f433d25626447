@@ -16,57 +16,69 @@ Find the sum of all distinct pseudo-Fortunate numbers for admissible numbers N l
 require './euler_lib.rb'
 
 
-N = 10**9
+@p = [2, 3, 5, 7,11,13,17,19,23,29]
 
-h = HandySieve.fetch(8)
+@h = HandySieve.fetch(0)
 
+puts "Loaded"
 
-@admissible = Array.new
-
-@a = Hash.new
-@a[2] = Array.new
-
-k = 2
-while k < N
-  @a[2].push k
-  @admissible.push k
-  k *= 2
+def search(idx, cur, &proc)
+  prime = @p[idx]  
+  while true
+    cur *= prime
+    break if cur > 10**9
+    yield cur
+    search(idx+1, cur, &proc)
+  end  
 end
 
 
-last_prime = 2
-h.primes do |p|
-  next if p == 2
-  break unless p**2 < N
-  @a[p] = Array.new
-  k = p
-  while k < N
-    @a[last_prime].each do |lpm|
-      if lpm*k < N      
-        @a[p].push lpm*k 
-        @admissible.push lpm*k
+@a = Array.new
+
+search(0,1) do |a|
+  @a.push a
+end
+
+
+@a.sort!
+
+@ans = Array.new
+
+@h.primes do |p|
+  while !@a.empty? and  (p - @a.first) > 1
+    puts "#{@a.first} #{p} #{p - @a.first}"
+    @ans.push p - @a.shift
+  end
+  break if @a.empty?
+end
+  
+
+
+p = @a.first + 1
+
+unless @a.empty?
+  while !@a.empty?
+    if miller(p)
+      while !@a.empty? and  (p - @a.first)  > 1
+        puts "#{@a.first} #{p} #{p - @a.first}"
+        @ans.push p - @a.shift
+      end
+      break if @a.empty?       
+      p = @a.first + 2
+      if (p % 2 == 0)
+        p += 1
       end
     end
-    k*= p    
+    p += 2  
   end
-  last_prime = p
 end
 
-@fort = Hash.new
-pp @admissible.length
+pp @ans.sort.uniq.inject(:+)
 
-@admissible.sort!
-@admissible.reverse!
-
-h.primes do |p|
-  while !@admissible.empty? and p > (@admissible.last+1)
-    #puts "#{@admissible.last}\t#{p}\t #{p - @admissible.last}"
-    @fort[p - @admissible.last] = 1
-    @admissible.pop
-  end
-  break if @admissible.empty?
-end
+#pp @ans
 
 
-pp @admissible.length
-puts @fort.keys.inject(:+)
+
+
+
+

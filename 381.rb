@@ -11,33 +11,79 @@ It can be verified that ∑S(p) = 480 for 5 ≤ p < 100.
 
 Find ∑S(p) for 5 ≤ p < 108.
 
+(p-1)! = (p-1) mod p
+
+
+
+(p-1)! = p*k + (p-1)
+
+(p-2)! = (p*k + (p-1)) / (p-2)
+
+
+6! mod 7 = 6  <=>   6! =    102*7 + 6
+
+(n-1)! = (n-1) mod p
+(n-2)! = (n-1)! / (n-1) mod p
+(n-3)! = (n-2)! / (n-2) mod p
+(n-4)! = (n-3)! / (n-3) mod p
+(n-5)! = (n-5)! / (n-5) mod p
+
+
+6! mod 7 = 6
+
+5! mod 7 = 1
+
+
+
+
+
+
+
+
+
+
 =end
 
-require './primes.rb'
+require './euler_lib.rb'
+
 
 
 def fact(n)
-  n == 0 ? 1 : n * fact(n-1)
+  return n == 0 ? 1 : n * fact(n-1)
 end
 
 
-def S(p)
-    sum = 0
-    5.downto(1) do |k|
-      sum += fact(p - k)
-    end
-    sum % p 
+def brute(p)
+  s = 0
+  (p-1).downto(p-5) do |k|
+    s += fact(k)
+  end
+  return s % p  
 end
 
 
-tot = 0
-
-Primes.setup(10**8)
-
-Primes.primes.each do |p|
-  
-  tot += S(p) if p > 3
+def compute(p)
+  sum = (p-1)
+  v   = (p-1)
+  2.upto(5) do |k|
+    r = extended_gcd(p - k + 1, p)
+    v = v*r[0] % p
+    sum += v % p
+  end
+  return sum % p
 end
 
 
-puts tot
+
+@h = HandySieve.fetch(8)
+
+puts "Loaded..."
+
+s  = 0
+@h.primes_upto(10**8) do |p|
+  if p > 3
+    s += compute(p)
+  end
+end
+
+puts s

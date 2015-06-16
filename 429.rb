@@ -39,6 +39,6 @@ while (line = f.gets) do
   v = vp(num)
   c *= (1 + modpow(num, v*2, 1000000009)) % 1000000009
   c = c % 1000000009
-end
+endgi
 
 puts c

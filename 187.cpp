@@ -2,13 +2,11 @@
 #include <bitset>
 #include <cmath>
 #include <vector>
-
 using namespace std;
 
-
-#define MAX_N  100000000
-#define MAX_PRIME 1000000000
+#define MAX_PRIME 100000000
 #define ulong unsigned long long
+
 
 class Primes {
   private:
@@ -18,6 +16,7 @@ class Primes {
     Primes();
     int is_prime(ulong);
 };
+
 
 
 Primes::Primes() {
@@ -44,38 +43,20 @@ int Primes::is_prime(ulong n) {
   return(b->test(n) == 1);
 };
 
-
 int main() {
 	Primes *p = new Primes();
-	ulong total = 0;
-	for(vector<ulong>::iterator i = p->primes->begin(); i != p->primes->end(); i++) {
+	int count = 0;
+  for(vector<ulong>::iterator i = p->primes->begin(); i != p->primes->end(); i++) {
 	  for(vector<ulong>::iterator j = i; j != p->primes->end(); j++) {
-      if (*i * *j >= MAX_N) {
+			ulong k = *i * *j;
+      if (k < 100000000) {
+				//cout << *i * *j << endl;
+				count += 1;	
+      } else {
 				break;
       }
-			//cout << *i << " x " << *j << " = " << *i * *j << endl;
-			total += 1;
-    }	
-	}
-	
-  /*
-	ulong q;
-	while (p->primes->size() > 0) {
-		ulong v = *(p->primes->begin());
-    if (v*v < MAX_N) {
-			total += 1;
-    }
-		p->primes->erase(p->primes->begin());
-	  for(vector<ulong>::iterator i = p->primes->begin(); i != p->primes->end(); i++) {
-			q = v * (*i);
-			if (q <= MAX_N) {
-				total++;
-			} else {
-				break;
-			}
-		}
-	}
-  */
-	cout << "Total: " << total << endl;
-	return(0);
+		}	
+	}	
+	cout << "Answer: " << count << endl;
+  return(0);
 }

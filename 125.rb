@@ -14,15 +14,14 @@ def sq(n)
  (2*n**3 + 3*n**2 + n) / 6
 end
 
-@h = Hash.new
+@h = Array.new
 
 1.upto(10000) do |i|
   (i+1).upto(10000) do |j|
     diff = sq(j) - sq(i-1)
     if diff < 10**8
       if diff.to_s == diff.to_s.reverse
-        puts "#{diff}: #{i} to #{j}"
-        @h[diff] = true 
+        @h.push diff
       end
     else
       break
@@ -30,4 +29,4 @@ end
   end  
 end
 
-puts @h.keys.inject(&:+)
+puts @h.uniq.inject(&:+)

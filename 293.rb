@@ -18,10 +18,6 @@ require './euler_lib.rb'
 
 @p = [2, 3, 5, 7,11,13,17,19,23,29]
 
-@h = HandySieve.fetch(0)
-
-puts "Loaded"
-
 def search(idx, cur, &proc)
   prime = @p[idx]  
   while true
@@ -39,38 +35,25 @@ search(0,1) do |a|
   @a.push a
 end
 
-
 @a.sort!
 
 @ans = Array.new
 
-@h.primes do |p|
-  while !@a.empty? and  (p - @a.first) > 1
-    puts "#{@a.first} #{p} #{p - @a.first}"
-    @ans.push p - @a.shift
-  end
-  break if @a.empty?
-end
-  
-
-
 p = @a.first + 1
 
-unless @a.empty?
-  while !@a.empty?
-    if miller(p)
-      while !@a.empty? and  (p - @a.first)  > 1
-        puts "#{@a.first} #{p} #{p - @a.first}"
-        @ans.push p - @a.shift
-      end
-      break if @a.empty?       
-      p = @a.first + 2
-      if (p % 2 == 0)
-        p += 1
-      end
+while !@a.empty?
+  if miller(p)
+    while !@a.empty? and  (p - @a.first)  > 1
+      #puts "#{@a.first} #{p} #{p - @a.first}"
+      @ans.push p - @a.shift
     end
-    p += 2  
+    break if @a.empty?       
+    p = @a.first + 2
+    if (p % 2 == 0)
+      p += 1
+    end
   end
+  p += 2  
 end
 
 pp @ans.sort.uniq.inject(:+)

@@ -15,6 +15,92 @@ We can verify that F(103) = 431 and F(104) = 78728.
 Find F(107).
 =end
 
+require './euler_lib.rb'
+
+@h = HandySieve.fetch(6)
+
+@digit_store = Hash.new(nil)
+
+def digits(n)
+  return @digit_store[n] ||= Math.log10(n).floor + 1
+end
+
+def kth_digit(n,k)
+  ((n % 10**(k+1)) - (n % 10**k)) / 10**k
+end
+
+
+def digit_to_left(n, &proc)
+  1.upto(9) do |a|
+    yield a*10**digits(n) + n
+  end
+end
+
+
+
+
+def change_digit_k(n, k, &proc)
+  digit_k = kth_digit(n,k)
+  
+  start = (k == digits(n) - 1) ? 1 : 0
+  
+  start.upto(9) do |nd|
+    yield n + (nd-digit_k) * 10**k
+  end
+end
+
+
+
+def change_1_digit(n, &proc)
+  0.upto(digits(n)-1) do |digit|
+    change_digit_k(n, digit, &proc)
+  end
+end
+
+def directly_connected(n, &proc)
+  digit_to_left(n, &proc)
+  change_1_digit(n, &proc)
+end
+
+
+
+
+def search(n, seen = Hash.new, &proc)
+  puts n
+  return if seen[n]
+  seen[n] = true
+  return if n > 10**3
+  yield n if @h.prime?(n)
+  directly_connected(n) do |k|
+    search(k, seen, &proc)
+  end  
+end
+
+sum = 0
+
+@h.primes_upto(10**3) do |p|
+  sum += p
+end
+
+
+search(2) do |n|
+  sum -= n
+end
+
+
+puts sum
+  
+
+
+
+#directly_connected(2) do |k|
+#  puts k
+#end
+
+
+
+
+=begin
 require 'pp'
 
 @max_prime = 10**5
@@ -95,3 +181,5 @@ while true
 end  
 pp @disco
 pp @search_space
+
+=end

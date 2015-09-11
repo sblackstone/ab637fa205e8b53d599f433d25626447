@@ -1,44 +1,28 @@
+=begin
+
+Factorial trailing digits
+Problem 160
+For any N, let f(N) be the last five digits before the trailing zeroes in N!.
+For example,
+
+9! = 362880 so f(9)=36288
+10! = 3628800 so f(10)=36288
+20! = 2432902008176640000 so f(20)=17664
+
+Find f(1,000,000,000,000)
+
+=end
+
+
+
 require 'pp'
 
-NVAL = 100_000_000
+max = 1_000_000_000_000
 
-def vp(base)
-  tmp = NVAL
-  index = 0
-  result = 0
-  while (tmp != 0)
-    result += tmp % base
-    tmp = tmp / base
-    index += 1
-  end
-  return((NVAL-result) / (base -1))
+
+
+def fact(n)
+  return n == 0 ? 1 : n * fact(n-1)
 end
 
-def modpow(b,e,m)
-  result = 1
-  while e > 0
-    if (e & 1) == 1
-      result = (result * b) % m;
-    end
-    e = e >> 1;
-    b = (b * b) % m;
-  end
-  return result
-end
-
-#1000000000000
-
-
-fact = 1
-
-1.upto(10) do |i|
-  while i % 10 == 0
-    i /= 10
-  end
-  fact = (fact * (i % 100000 )) % 100000
-  while fact % 10 == 0
-    fact /= 10
-  end
-end
-
-puts fact
+puts fact(6) % 7

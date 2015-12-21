@@ -136,11 +136,14 @@ end
   end
 end
 
+
+
+exit
 puts @checkouts.keys.size
 count = 0
 @checkouts.each do |k,v|
   if v < 100
-    puts k
+    #puts k
     count += 1
   end
 end

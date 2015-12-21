@@ -39,9 +39,6 @@ def do_tile(block, container)
   sum 
 end
 
-a = tile(2,50)
-b = tile(3,50)
-c = tile(4,50)
+puts tile(2,50) + tile(3,50) + tile(4,50)
 
 
-puts a+b+c

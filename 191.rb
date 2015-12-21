@@ -83,7 +83,7 @@ def t(n,k)
 end
 
 
-n = 365
+n = 30
 sum = 0
 0.upto(n) do |k|
   sum += t(n-1,n-k) * k

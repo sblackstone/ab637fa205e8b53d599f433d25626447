@@ -1,0 +1,1 @@
+gcc -O3 -g 216.c -I/opt/local/include -L/opt/local/lib -lgmp -o 216

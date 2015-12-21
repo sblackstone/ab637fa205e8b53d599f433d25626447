@@ -36,7 +36,10 @@ def handle(cur)
   end
 
   @total += t
-  
+=begin  
+
+  Per problem thread suggestion, no need to do this - just multiply by 9/10ths...
+
   if cur[0] > 0
     cur[0] -= 1
     tprime = fact(17)
@@ -46,6 +49,8 @@ def handle(cur)
     @total -= tprime    
     cur[0] += 1    
   end
+=end
+  
   
 end
 
@@ -69,4 +74,4 @@ end
 
 ways_to_add_to_18
 
-pp @total
+pp @total * 9 / 10

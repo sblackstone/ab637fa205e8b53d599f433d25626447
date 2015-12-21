@@ -1,0 +1,89 @@
+require 'pp'
+
+=begin
+A spider, S, sits in one corner of a cuboid room, measuring 6 by 5 by 3, and a fly, F, sits in the opposite corner. 
+By travelling on the surfaces of the room the shortest "straight line" distance from S to F is 10 and the path is shown on the diagram.
+
+
+However, there are up to three "shortest" path candidates for any given cuboid and the shortest route doesn't always have integer length.
+
+By considering all cuboid rooms with integer dimensions, up to a maximum size of M by M by M, there are exactly 2060 cuboids
+for which the shortest route has integer length when M=100, 
+and this is the least value of M for which the number of solutions first exceeds two thousand; the number of solutions is 1975 when M=99.
+
+Find the least value of M such that the number of solutions first exceeds one million.
+
+=end
+
+
+
+
+@squares = Hash.new
+1.upto(50_000) do |i|
+  @squares[i**2] = true
+end
+
+
+def isSquare?(n)
+  throw "err" if n > 50_000**2
+  @squares[n]
+end
+
+
+
+def test5(n)
+  1.upto(n) do |a|
+    a.upto(n) do |b|
+      b.upto(n) do |c|
+        puts "#{a} #{b} #{c}"
+      end
+    end
+  end
+  
+end
+
+
+test5(3)
+test5(4)
+exit
+
+
+def test3(h)
+  s2 = 0
+  1.upto(n) do |l|
+    1.upto(n) do |w|
+      puts "#{l} #{w} #{h}"
+      v3 = (l+w)*(l+w) + h*h
+      if isSquare?(v3)
+        s2 += 1
+      end
+      
+    end
+  end  
+  s2
+end
+
+
+def test4(m)
+  sum = 0
+  1.upto(m) do |l|
+    (l).upto(m) do |w|
+      lws = (l+w)**2
+      (w).upto(m) do |h|
+        v3 =  h*h + lws
+        if isSquare?(v3)
+           sum += 1
+         end
+      end
+    end
+  end
+  sum
+end
+
+s = 0
+
+1.upto(100) do |i|
+  s += test3(i)
+end
+
+puts s

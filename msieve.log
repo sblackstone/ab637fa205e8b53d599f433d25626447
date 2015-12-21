@@ -1,0 +1,16 @@
+Mon Jan  6 14:09:39 2014  
+Mon Jan  6 14:09:39 2014  
+Mon Jan  6 14:09:39 2014  Msieve v. 1.51 (SVN Unversioned directory)
+Mon Jan  6 14:09:39 2014  random seeds: fff19399 9b10441f
+Mon Jan  6 14:09:39 2014  factoring 7557912574608535164426718292058021255641310207187633095795069445700059210248050757270234679993673844203148013173091173786572116639 (130 digits)
+Mon Jan  6 14:09:40 2014  no P-1/P+1/ECM available, skipping
+Mon Jan  6 14:09:40 2014  commencing quadratic sieve (130-digit input)
+Mon Jan  6 14:09:40 2014  using multiplier of 31
+Mon Jan  6 14:09:40 2014  using generic 32kb sieve core
+Mon Jan  6 14:09:40 2014  sieve interval: 122 blocks of size 32768
+Mon Jan  6 14:09:40 2014  processing polynomials in batches of 2
+Mon Jan  6 14:09:40 2014  using a sieve bound of 20025151 (635411 primes)
+Mon Jan  6 14:09:40 2014  using large prime bound of 3003772650 (31 bits)
+Mon Jan  6 14:09:40 2014  using double large prime bound of 114762684552522300 (49-57 bits)
+Mon Jan  6 14:09:40 2014  using trial factoring cutoff of 57 bits
+Mon Jan  6 14:09:40 2014  polynomial 'A' values have 15 factors

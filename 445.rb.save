@@ -1,0 +1,223 @@
+=begin
+
+
+Retractions A
+Problem 445
+For every integer n>1, the family of functions f is defined by f(x)≡ax+b mod n for a,b,x integer and 0<a<n, 0≤b<n, 0≤x<n.
+
+
+f(x) = ax+b (mod n)  
+
+where a = 1..(n-1)  and b = 0..n
+
+
+We will call fn,a,b a retraction if fn,a,b(fn,a,b(x))≡fn,a,b(x) mod n for every 0≤x<n.
+Let R(n) be the number of retractions for n.
+
+You are given that
+∑ R(c) for c=C(100 000,k), and 1 ≤ k ≤99 999 ≡628701600 (mod 1 000 000 007).
+(C(n,k) is the binomial coefficient).
+Find ∑ R(c) for c=C(10 000 000,k), and 1 ≤k≤ 9 999 999.
+Give your answer modulo 1 000 000 007.
+
+
+
+
+
+
+
+n**2 - n = 0 mod n
+
+Suppose N = 4
+
+x0*a + b = 1 mod 4   
+x1*a + b = 2 mod 4
+x2*a + b = 3 mod 4
+x3*a + b = 0 mod 4
+
+where x0..x3 are unique elements of (0,1,2,3)
+
+- A = 1, B = 0 is trivial answer. (identity)
+
+- A = (n-1)
+
+  x(n-1) + b mod n
+  xn - x + b mod n = b - x mod n
+  So any B will work...
+
+
+
+
+- A.gcd(n) == 1
+
+
+
+
+
+
+  
+
+
+
+
+
+
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  16
+0,0,0,1,0,1,0,7,0, 1, 0,11,0, 1,  8, 11,0,1,0,15,10,1,0,39,0
+
+ 
+(a+1)*b             = 0 mod n
+(a**2 +a*b + b - 1) = 0 mod n
+
+
+ab + b = 0 mod n
+
+a**2 - 1
+
+
+nk = (a+1)*b
+nk = a*(a + b) + b - 1
+
+2nk = (a+1)*b + a*(a + b) + b - 1
+
+
+=end
+
+
+require 'pp'
+
+require './primes.rb'
+
+Primes.setup(100)
+
+@prime_powers = Hash.new(false)
+@powers_of_two = Hash.new(false)
+
+Primes.primes.each do |p|
+  k = 0
+  while p**k < 1000
+    @prime_powers[p**k] = true
+    k += 1
+  end  
+end
+
+0.upto(100) do |i|
+  @powers_of_two[2**i] = true
+end
+
+
+
+
+
+
+def f(a,b,n,x)
+  (a*x + b) % n
+end
+
+def predict(n)
+    sum = 0
+    1.upto(n-1) do |a|
+      0.upto(n-1) do |b|
+        check1 = (a+1)*b
+        check2 = a*(a + b) + b - 1 
+        if check1 % n == 0 || check2 % n == 0
+          if check1 % n != check2 % n
+            puts "\tA: #{a} #{b}" if check1 % n > 0 # check2 was deciding
+            puts "\t\tB: #{a} #{b}" if check2 % n > 0 # check1 was deciding            
+          else
+            puts "\t\t\t#{a} #{b}" 
+            sum +=1
+          end
+        end
+      end
+    end
+    sum 
+end
+
+
+def test(n, quiet = false)
+  puts "N: #{n}" unless quiet
+  sum = 0
+
+  1.upto(n-1) do |a|
+    0.upto(n-1) do |b|
+      qtmp = quiet
+      hsh = Hash.new(0)
+      0.upto(n-1) do |x|
+        v = f(a,b,n,x)
+        hsh[x] = f(a,b,n,x)
+      end
+      not_retraction = false
+      0.upto(n-1) do |i|
+        not_retraction = true unless hsh[hsh[i]] == i
+      end
+
+      unless not_retraction or quiet 
+        print "\t(#{a},#{b})" 
+        0.upto(n-1) do |i|
+          print " #{hsh[i]} " 
+        end
+        print not_retraction ? "N" : "Y" 
+        print " " 
+        print (a+1)*b % n == 0 ? "Y" : "N"
+        puts 
+      end
+      sum +=1 unless not_retraction 
+
+      quiet = qtmp
+    end
+  end
+#  puts "\nSum = #{sum}" 
+  sum
+end
+
+puts predict(12)
+exit
+3.upto(100) do |n|
+  actual = test(n,true)
+  prediction = predict(n)
+  #puts "#{n}: #{actual}"
+  puts "#{n}: #{actual}\t#{prediction}\t#{actual-prediction}" unless actual == prediction
+  #puts
+end
+
+
+
+
+
+=begin
+def test(a,b,n)
+  0.upto(n-1) do |x|
+    v1 = f(a,b,n,  x)
+    v2 = f(a,b,n, v1)
+    v3 = f(a,b,n, v2)
+    return false if v1 != v2 or v2 != v3
+  end
+  #puts "\t#{n}: #{a} #{b}"
+  return(true)
+end
+
+
+def test2(a,b,n)
+  @hsh = Hash.new(0)
+  0.upto(n-1) do |x|
+    @hsh[f(a,b,n,x)] += 1
+  end
+  puts "(#{a},#{b})" if @hsh.keys.sort.uniq.length == n
+  
+end
+
+
+5.upto(100) do |n|
+  sum = 0
+  1.upto(n-1) do |a|
+    0.upto(n) do |b|
+      sum += 1 if test(a,b,n)
+    end
+  end
+  puts "#{n}: #{sum}" if sum != 2
+end
+
+
+=end
+

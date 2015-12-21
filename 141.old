@@ -1,0 +1,118 @@
+=begin
+
+Investigating progressive numbers, n, which are also square
+Problem 141
+A positive integer, n, is divided by d and the quotient and remainder are q and r respectively. In addition d, q, and r are consecutive positive integer terms in a geometric sequence, 
+but not necessarily in that order.
+
+For example, 58 divided by 6 has quotient 9 and remainder 4. It can also be seen that 4, 6, 9 are consecutive terms in a geometric sequence (common ratio 3/2).
+We will call such numbers, n, progressive.
+
+Some progressive numbers, such as 9 and 10404 = 102^2, happen to also be perfect squares.
+The sum of all progressive perfect squares below one hundred thousand is 124657.
+
+Find the sum of all progressive perfect squares below one trillion (1012).
+
+a < b < c
+
+n^2 = bc + a
+n^2 = ac + b <=> n^2 = b(b+1) <=> because b(b+1) is never a square, this can't occur.
+n^2 = ab + c <=> n^2 is evenly divisble by b which can't happen...
+
+
+n^2 = bc + (b^2 / c)
+
+n^2 = bc + (b^2 / c)
+
+
+102^2 = bc + (b^2/c)
+
+
+102^2 = 72c + 5184/c
+
+102^2 = 72c^2/c + 5184/c
+
+
+102^2 = (72c^2 + 5184) / c
+
+
+(102^2)c = 72c^2 + 5184
+
+72c^2 - (102^2)c + 5184 = 0
+
+quad(b, n^2, b^2)
+
+
+
+
+
+---
+
+10**7 = 14253190
+10**8 = 171436696
+
+
+=end
+
+require 'pp'
+require './euler_lib.rb'
+
+
+MAX = 10**8
+
+@cubes   = Hash.new(nil)
+@squares = Hash.new(nil)
+
+k = 2
+while k**2 < MAX
+  @squares[k**2] =  k
+  @cubes[k**3]   =  k
+  k += 1
+end
+
+
+
+def brute_is_square?(n)
+  v = Math.sqrt(n).floor
+  return v*v == n
+end
+
+
+
+
+@lookup = Hash.new(false)
+
+def is_perfect_square(n)
+  case n & 0b1111
+  when 0,1,4,9
+  else
+    return false
+  end
+  return brute_is_square?(n)
+end
+
+sum = 0
+
+@squares.each do |n2,n|
+  next unless n2 == 10404
+  n22 = n2*n2
+  @cubes.each do |b3,b|
+    break if b > n
+    next unless b3 % (n2/b) == 0 
+    v = n22 - (4*b3)
+    next if v <= 0
+    if is_perfect_square(v)
+      a = n2 / b
+      c = n2 % b
+      puts "#{n2} #{b3} #{a} #{b} #{c}"
+      sum += n2
+      break
+    end    
+  end  
+end
+
+  
+pp sum
+
+exit
+

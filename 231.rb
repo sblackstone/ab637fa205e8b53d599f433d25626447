@@ -47,7 +47,6 @@ while (p = f.gets)
   p_in_nmkf = vp(nmk, p)
   sum += p * (p_in_nf - p_in_kf - p_in_nmkf)
   break if p > n
-  #puts p
 end
 
 puts sum

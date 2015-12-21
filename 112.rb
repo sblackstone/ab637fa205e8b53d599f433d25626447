@@ -1,17 +1,5 @@
 require 'pp'
 
-correct = Hash.new(true)
-
-100.upto(999) do |j|
-  i = j
-  o = i % 10
-  i /= 10
-  t = i % 10
-  i /= 10
-  h = i % 10
-  correct["#{h}#{t}#{o}".to_i] = false if (h >= t and t >= o) or (o >= t and t >= h)
-
-end
 
 def bouncy?(n)
   return false if n < 100

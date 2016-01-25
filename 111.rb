@@ -32,51 +32,132 @@ require './euler_lib.rb'
 
 N = 4
 
-puts "Start = #{10**(N-1)}"
-puts "Stop  = #{10**N - 1}"
+h = HandySieve.fetch(6)
 
 
-h = HandySieve.fetch(N)
+
+def find_n_digit_prime_with_k_digits_d_and_replacing_c(n,k,d,c, arr = nil, &block)
+  arr ||= Array.new(n, d)
+
+  if c.empty?
+    return if arr[0] == 0
+    v = arr.join.to_i
+    yield v if miller(v)
+    return
+  end
+  
+  b = c.pop
+  
+  0.upto(9) do |i|
+    next if i == 0 and b == 0
+    next if i == d
+    arr[b] = i
+    find_n_digit_prime_with_k_digits_d_and_replacing_c(n,k,d,c,arr, &block)  
+  end
+  
+  c.push b
+
+
+end
+
+
+def find_n_digit_prime_with_k_digits_d(n,k,d, &block)
+  (0..(n-1)).to_a.combination(n-k) do |c|
+    find_n_digit_prime_with_k_digits_d_and_replacing_c(n,k,d,c, &block)
+  end  
+end
+
+
+def sum_of_n_digit_primes_with_k_digits_d(n,k,d)
+  s = 0
+
+  find_n_digit_prime_with_k_digits_d(n, k, d) do |p|
+    s += p
+  end
+  return s
+
+end
+
+
+sum = 0  
+
+0.upto(9) do |digit|
+  9.downto(1) do |copies|
+    v = sum_of_n_digit_primes_with_k_digits_d(10, copies, digit)
+    if v > 0
+      puts v
+      sum += v
+      break
+    end
+    
+  end
+  
+end
+
+
+puts "Answer = #{sum}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exit
+
+
+
 
 def digits_count(n)
-  h = Hash.new(0)
+  digits = Hash.new
   while n > 0
-    h[n % 10] += 1
-    n = n - (n % 10)
+    d = n % 10
+    n -= d
     n /= 10
-  end
-  h
+    digits[d] ||= 0
+    digits[d] += 1
+  end  
+  digits
 end
 
 
-@max_reps = Array.new(10, 0)
-@max_sums = Array.new(10, 0)
-@max_prim = Array.new(10, 0)
-
-h.primes_upto(10**N - 1) do |p|
-
-  if p > 10**(N-1)
-    digits = digits_count(p)
-    digits.each do |d,c|
-      if c > @max_reps[d] 
-        @max_reps[d] = c 
-        @max_sums[d] = p
-        @max_prim[d] = [ p ]
-      elsif c == @max_reps[d] 
-        @max_sums[d] += p
-        @max_prim[d].push p
-      end
-    end
-  end
-end
-
-1_549_681_956
+digits = Hash.new
 
 0.upto(9) do |d|
-puts "Maximum #{d}-reps: #{@max_reps[d]}"
-puts "Sum-#{d}: #{@max_sums[d]}"
-print "Primes: "
-puts @max_prim[d].join(", ")
-puts
-puts
+  digits[d] = { max_repeat: 0, sum: 0 }
 end
+
+h.primes do |p|
+  next if p < 1000
+  break if p >= 10_000
+  dc = digits_count(p)
+  
+  dc.each do |dig, copies|
+    if digits[dig][:max_repeat] < copies
+      digits[dig][:max_repeat] = copies
+      digits[dig][:sum] = p
+    elsif digits[dig][:max_repeat]  == copies
+      digits[dig][:sum] += p
+    end    
+  end
+end
+
+
+sum = 0
+0.upto(9) do |d|
+  sum += digits[d][:sum]
+end
+
+puts 
+puts "Answer = #{sum}"

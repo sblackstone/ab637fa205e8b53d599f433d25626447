@@ -14,32 +14,27 @@ NOTE: This problem is an easier version of problem 110; it is strongly advised t
 
 n/x + n/y = 1
 
-n + nx/y = x
-ny + nx = xy
-
-n(x+y) = xy
-
-n = xy / (x+y)
-n(x+y) = xy
-
 nx + ny = xy
 
 
+n(x+y) = xy
 
-xy must be some multiple of n <=> n = k*xy
-xy must be greater than n <=> k > 1
+xy/n = (x+y)
 
 
-===== SOOOO
 
-y =  nx / (x - n) 
-x =  ny / (y - n)
+# Smallest N = (p1^a1)(p2^a2)(p3^a3)
 
-=====
+such that..
 
-x = k*m*(m+n)
-y = k*n*(m+n)
+(2*a1+1)(2*a2+1) > 1000
 
+
+
+
+2*3 = 3*3 = 9
+
+2**2 = 5
 
 
 
@@ -49,70 +44,53 @@ y = k*n*(m+n)
 
 require 'pp'
 
-require './primes.rb'
-
-Primes.setup(4_000_000)
+require './euler_lib.rb'
 
 
-@pdivisors = Array.new(4_000_000)
+@h = HandySieve.fetch(4)
 
-0.upto(4_000_000) {|i| @pdivisors[i] = Array.new }
+@primes = []
 
-Primes.primes.each do |p|
-  pk = p
-  break if p > 4_000_000
-  while pk < 4_000_000
-    @pdivisors[pk].push p
-    pk += p
-  end
+@h.primes_upto(1_000) do |p|
+  @primes.push p
 end
 
 
-def sigma_n(n)
-  sum = 1
-  @pdivisors[n].each do |p|
-    tn = n
-    k = 0
-    while tn % p == 0
-      tn /= p
-      k += 1
+
+@best = 10**20
+
+def search(target, fact_count = 1, cur_val = 1, depth = 0, arr = [])
+  
+  if (fact_count / 2) > target
+    if cur_val < @best
+      @best = cur_val
+      pp @best
+      pp arr
     end
-    sum *= (k + 1)  
+    
+    return
   end
-  sum
-end
-
-
-# http://answers.yahoo.com/question/index?qid=20101205221817AA9vNp7
-# this function calculates number of divisors in n squared.
-def sigma_n2(n)
-  sum = 1
-  @pdivisors[n].each do |p|
-    tn = n
-    k = 0
-    while tn % p == 0
-      tn /= p
-      k += 1
-    end
-    sum *= (2*k + 1)  
+  
+  return if cur_val > @best
+  
+  i = 1
+  while @primes[depth]**i < @best
+    v = (i*2 + 1)
+    cur_val    *= @primes[depth]**i
+    fact_count *= v
+    arr.push i
+    search(target, fact_count, cur_val, depth+1, arr)
+    arr.pop
+    fact_count /= v
+    cur_val    /= @primes[depth]**i
+    i += 1
   end
-  sum
+  
+  
 end
 
 
-
-def solutions(n)
-  (sigma_n2(n) + 1) / 2
-end
+search(4_000_000)
 
 
-i = 2
-while true
-  v = solutions(i)
-  puts i
-  if v >= 4_000_000
-    puts "#{i}: #{v}"
-    exit
-  end
-  i += 1
-end
+

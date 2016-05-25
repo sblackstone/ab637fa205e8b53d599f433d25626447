@@ -6,110 +6,132 @@ Let's call M(n) the largest value of a < n such that a**2 = a (mod n).
 
 So M(6) = 4.
 
-Find sum M(n) for 1 <=  n  <= 10**7.
-
-If n = p^k, then M(n) = 1
 
 
-a**2 = a mod n
-a**2 - a = 0 mod n
-a(a-1) = 0 mod n
+6 = 2^1 * 3^1
 
-a(a-1) = nk
-
-
-n = 3 * 2
-
-
-
-brute(6) = 4
-
-   0 1 
--------
-0| 0 0 
-1| 0 1 
-
-
-   0 1 2 
---------
-0| 0 0 0  
-1| 0 1 2 
-2| 0 2 1 
-
-
-           0     1     2     3     4     5
-
-         (0,0) (0,1) (0,2) (1,0) (1,1) (1,2)
-
-0 (0,0)  (0,0) (0,0) (0,0) (0,0) (0,0) (0,0)
-1 (0,1)  (0,0) (0,1) (0,2) (0,0) (0,1) (0,2)  
-2 (0,2)  (0,0) (0,2) (0,4) (0,0) (0,2) (0,4)
-3 (1,0)  (0,0) (0,0) (0,0) (1,0) (1,0) (1,0)
-4 (1,1)  (0,0) (0,1) (0,2) (1,0) (1,1) (1,2)
-5 (1,2)  (0,0) (0,2) (0,4) (1,0) (1,2) (1,4)
-
-
-
-
-   0 1 2 3 4 5
---------------
-0| 0 0 0 0 0 0
-1| 0 1 2 3 4 5
-2| 0 2 4 0 2 4
-3| 0 3 0 3 0 3
-4| 0 4 2 0 4 2
-5| 0 5 4 3 2 1
-
-
-
-
-
-Z/6Z = Z/2Z * Z/3Z
-
-
-
-
-
-
-6: 4     6  = 3*2    4 = 2*2
-10: 6    10 = 5*2    6 = 3*2  
-14: 8
-15: 10
-21: 15
-22: 12
-
-
-e(e-1) = n*k
-
-A start: You can figure it out! Let us start with a product mn of relatively prime integers, neither equal to 1. 
-By the Chinese Remainder Theorem, there is an x such that x≡0(modm) and x≡1(modn). Then x2≡x(modmn).
-
-22 = 11 * 2
-
-x = 1 mod 11
-x = 0 mod  2
-
-x = 11t + 1
-x = 2 q
-2x = 11t + 2q
+x = 0 mod 2
+x = 1 mod 3
 
 
 
 
 
 =end
+
+
 require './euler_lib.rb'
-
-h = HandySieve.fetch(6)
-pp h.prime_power? 2
-pp h.prime_power? 4
-
-pp h.prime_power? 3
-pp h.prime_power? 9
-pp h.prime_power? 27
+require 'pp'
+require 'byebug'
 
 
+def lcm(arr)
+  a = arr.first
+  1.upto(arr.length - 1) do |i|
+    a = a*arr[i] / a.gcd(arr[i])
+  end
+  return a  
+end
 
-#h = HandySieve.new(10**8)
 
-#File.open('/tmp/handy_sieve', 'w') {|f| f.write(Marshal.dump(h)) }
+def mod_inverse(a,n)# pristine
+  t    = 0
+  newt = 1
+  r    = n
+  newr = a % n
+  while newr != 0
+    q = (r / newr).to_i
+    tmp = newt
+    newt = t - (q * newt)
+    t    = tmp
+    tmp = newr
+    newr = r - (q * newr)
+    r    = tmp    
+  end
+  return nil if r > 1
+  return (t < 0) ? (t + n) : t
+end
+
+
+
+def crt(mods, remainders)# pristine
+  modulus = lcm(mods)  
+  n = 0
+  0.upto(mods.length - 1) do |i|
+    ni = modulus / mods[i]
+    n   += (ni)*(mod_inverse(ni, mods[i]))*remainders[i]
+  end  
+  return n % modulus, modulus  
+end
+
+def brute(n)
+  max = 1
+  1.upto(n-1) do |i|
+    max = i if i**2 % n == i
+  end
+  return max
+end
+
+
+def max_sum_not_exceeding(n, arr, pos = 0, cur_sum = 0)
+  if pos == arr.length
+    return cur_sum
+  else
+    a = max_sum_not_exceeding(n, arr, pos+1, cur_sum)
+    b = max_sum_not_exceeding(n, arr, pos+1, (cur_sum+arr[pos]) % n)
+    return a > b ? a : b
+  end
+end
+
+
+def test(mods)
+  return 1 if mods.length == 1
+  modulus = lcm(mods)  
+  v = mods.map {|m| (modulus / m)*mod_inverse((modulus / m), m) }.reject {|x| x <= 0}
+  max_sum_not_exceeding(mods.inject(:*), v)  
+end
+
+
+h = HandySieve.new(10**7 + 1)
+=begin
+primes = Array.new
+h.primes { |p| primes << p }
+
+def everything_up_to(n, primes, pos = 0, cur_val = 1, cur_arr = [], &block)
+  if pos == primes.length || cur_val > n
+    yield cur_val, cur_arr unless cur_val > n
+    return
+  end
+    
+  everything_up_to(n, primes, pos+1, cur_val, cur_arr, &block)
+  
+  p = primes[pos]
+  cur_arr.push 1
+  while cur_val < n
+    cur_val *= p
+    cur_arr[-1] *= p
+    everything_up_to(n, primes, pos+1, cur_val, cur_arr, &block)
+  end
+  cur_arr.pop
+  
+  
+end
+
+everything_up_to(10**7, primes) do |n, facts|
+  print "#{n}\t"
+  pp facts
+end
+
+=end
+
+sum_a = 0
+2.upto(10**7) do |i|
+  #puts i if i % 1000 == 0
+  a =  test(h.prime_factors2(i))
+  sum_a += a
+end
+puts "Sum a = #{sum_a}"
+puts sum_a == 39782849136421
+
+
+
